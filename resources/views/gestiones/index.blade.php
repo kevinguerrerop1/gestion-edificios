@@ -9,10 +9,8 @@
         </a>
     </h2>
 
-    <a href="{{ route('gestiones.create') }}" class="btn btn-primary mb-3">Nueva petición</a>
-
     @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     <div class="container mt-4">
