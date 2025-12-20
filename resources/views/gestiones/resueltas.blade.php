@@ -29,7 +29,8 @@
                 <td>{{ $p->titulo }}</td>
                 <td>{{ $p->estado }}</td>
                 <td>{{\Carbon\Carbon::parse($p->created_at)->format('d-m-Y H:i:s')}}</td>
-                <td><a href="{{ route('visitas.historial', $p->id) }}" class="btn btn-warning btn-sm">Visitas</a></td>
+                <td><a href="{{ route('visitas.historial', $p->id) }}" class="btn btn-warning btn-sm">Visitas</a>
+                <a href="{{ route('visitas.historial', $p->id) }}" class="btn btn-warning btn-sm">Historial</a></td>
             </tr>
             @endforeach
         </tbody>

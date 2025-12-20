@@ -35,7 +35,7 @@
                     <ul class="navbar-nav me-auto">
                         <!-- Ejemplo: puedes poner enlaces visibles siempre -->
                         <li class="nav-item">
-                            <a class="nav-link" href="/home">Inicio</a>
+                            <a class="nav-link" href="/gestiones">Inicio</a>
                         </li>
                     </ul>
 
@@ -59,12 +59,13 @@
                             <!-- NUEVO DROPDOWN SOLO PARA LOGUEADOS -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Administración
+                                    Gestiones
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
-                                    <li><a class="dropdown-item" href="/mantenciones">Mantenciones</a></li>
-                                    <li><a class="dropdown-item" href="/equipos">Equipos</a></li>
+                                    <li><a class="dropdown-item" href="/gestiones">Nuevas</a></li>
+                                    <li><a class="dropdown-item" href="/gestiones/pendientes">Pendientes</a></li>
+                                    <li><a class="dropdown-item" href="/gestiones/resueltas">Finalizadas</a></li>
+                                    <li><a class="dropdown-item" href="/gestiones">Todas</a></li>
                                 </ul>
                             </li>
 
