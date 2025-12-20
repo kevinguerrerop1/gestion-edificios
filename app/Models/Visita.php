@@ -18,6 +18,6 @@ class Visita extends Model
 
     public function gestion()
     {
-        return $this->belongsTo(Gestion::class);
+        return $this->belongsTo(Gestiones::class);
     }
 }

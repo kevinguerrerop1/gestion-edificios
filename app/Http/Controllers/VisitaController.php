@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Visita;
 use App\Models\gestiones;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class VisitaController extends Controller
@@ -17,7 +16,7 @@ class VisitaController extends Controller
 
     public function create($gestion_id)
     {
-        $gestion = Gestion::findOrFail($gestion_id);
+        $gestion = Gestiones::findOrFail($gestion_id);
         return view('visitas.create', compact('gestion'));
     }
 
@@ -28,7 +27,7 @@ class VisitaController extends Controller
             'hora_visita' => 'required'
         ]);
 
-        $gestion = Gestion::findOrFail($gestion_id);
+        $gestion = Gestiones::findOrFail($gestion_id);
 
         Visita::create([
             'gestion_id' => $gestion->id,
@@ -44,7 +43,7 @@ class VisitaController extends Controller
 
     public function historial($gestion_id)
     {
-        $gestion = Gestion::findOrFail($gestion_id);
+        $gestion = Gestiones::findOrFail($gestion_id);
         $visitas = $gestion->visitas()->orderBy('fecha_visita', 'desc')->get();
 
         return view('visitas.historial', compact('gestion', 'visitas'));

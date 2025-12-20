@@ -31,6 +31,7 @@
                 <td>{{\Carbon\Carbon::parse($p->created_at)->format('d-m-Y H:i:s')}}</td>
 
                 <td><a href="{{ url('gestiones/'.$p->id.'/edit') }}" class="btn btn-warning btn-sm">Editar</a></td>
+                <td><a href="{{ route('visitas.historial', $p->id) }}" class="btn btn-warning btn-sm">Visitas</a></td>
             </tr>
             @endforeach
         </tbody>
