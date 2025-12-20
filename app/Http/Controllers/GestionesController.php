@@ -38,23 +38,27 @@ class GestionesController extends Controller
 
     public function store(Request $request)
     {
-        /*$request->validate([
-            'departamento' => 'required',
-            'titulo' => 'required',
-            'descripcion' => 'required'
+        $request->validate([
+            'departamento'      => 'required',
+            'titulo'            => 'required',
+            'descripcion'       => 'required',
+            'nombre_contacto'   => 'required',
+            'telefono_contacto' => 'required',
+            'email_contacto'    => 'required|email'
         ]);
-        $data = $request->except('_token');
-        //dd($data);
-        gestiones::create($data);*/
 
-        $gestion= new gestiones();
-        $gestion->departamento=$request->departamento;
-        $gestion->titulo=$request->titulo;
-        $gestion->descripcion=$request->descripcion;
+        $gestion = new gestiones();
+        $gestion->departamento = $request->departamento;
+        $gestion->titulo = $request->titulo;
+        $gestion->descripcion = $request->descripcion;
+        $gestion->nombre_contacto = $request->nombre_contacto;
+        $gestion->telefono_contacto = $request->telefono_contacto;
+        $gestion->email_contacto = $request->email_contacto;
+        $gestion->estado = 'pendiente'; // opcional si tienes este campo
         $gestion->save();
 
         return redirect()->route('gestiones.index')
-            ->with('success','Solicitud registrada correctamente.');
+            ->with('success', 'Solicitud registrada correctamente.');
     }
 
     public function agendarvisita($id)

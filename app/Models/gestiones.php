@@ -8,7 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class gestiones extends Model
 {
     protected $fillable = [
-        'departamento', 'titulo', 'descripcion', 'estado'
+        'departamento',
+        'titulo',
+        'descripcion',
+        'nombre_contacto',
+        'telefono_contacto',
+        'email_contacto',
+        'estado'
     ];
 
     public function visitas()
