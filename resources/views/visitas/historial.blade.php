@@ -12,23 +12,41 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($visitas as $v)
-            <tr>
-                <td>{{ $v->fecha_visita }}</td>
-                <td>{{ $v->hora_visita }}</td>
-                <td>{{ $v->estado }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="container mt-4">
+    <h4 class="mb-4">📜 Historial de visitas</h4>
+
+    <div class="list-group">
+        @forelse($visitas as $v)
+        <div class="list-group-item list-group-item-action mb-2 rounded shadow-sm">
+
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">
+                    📅 {{ \Carbon\Carbon::parse($v->fecha_visita)->format('d-m-Y') }}
+                </h5>
+
+                <small class="text-muted">
+                    🕒 {{ \Carbon\Carbon::parse($v->hora_visita)->format('H:i') }}
+                </small>
+            </div>
+
+            <p class="mb-1">
+                Estado:
+                <span class="badge
+                    @if($v->estado == 'pendiente') bg-warning text-dark
+                    @elseif($v->estado == 'realizada') bg-success
+                    @else bg-secondary @endif">
+                    {{ ucfirst($v->estado) }}
+                </span>
+            </p>
+
+        </div>
+        @empty
+        <div class="alert alert-info">
+            No hay visitas registradas aún.
+        </div>
+        @endforelse
+    </div>
+</div>
+
 </div>
 @endsection
