@@ -33,7 +33,10 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                        <!-- Ejemplo: puedes poner enlaces visibles siempre -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home">Inicio</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -52,6 +55,20 @@
                                 </li>
                             @endif
                         @else
+
+                            <!-- NUEVO DROPDOWN SOLO PARA LOGUEADOS -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Administración
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
+                                    <li><a class="dropdown-item" href="/mantenciones">Mantenciones</a></li>
+                                    <li><a class="dropdown-item" href="/equipos">Equipos</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- Dropdown con nombre del usuario -->
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
@@ -59,8 +76,8 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    onclick="event.preventDefault();
+                                                    document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -72,6 +89,7 @@
                         @endguest
                     </ul>
                 </div>
+
             </div>
         </nav>
 
