@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Visita;
+use App\Mail\VisitaConfirmada;
+use Illuminate\Support\Facades\Mail;
 use App\Models\gestiones;
 use Illuminate\Http\Request;
 
@@ -35,6 +37,13 @@ class VisitaController extends Controller
             'hora_visita' => $request->hora_visita,
             'estado' => 'pendiente'
         ]);
+        //dd($gestion);
+
+        if (!empty($gestion->email_contacto)) {
+            Mail::to($gestion->email_contacto)->send(
+                new VisitaConfirmada($gestion, $request->fecha_visita, $request->hora_visita)
+            );
+        }
 
         return redirect()
             ->route('visitas.historial', $gestion->id)

@@ -44,8 +44,5 @@
             </tbody>
         </table>
     </div>
-
-
-    {{ $gestiones->links() }}
 </div>
 @endsection
