@@ -61,6 +61,29 @@ class GestionesController extends Controller
             ->with('success', 'Solicitud registrada correctamente.');
     }
 
+    public function nueva(){
+        return view('gestiones.nueva');
+    }
+
+
+
+    public function nuevastore(Request $request){
+
+        $gestion = new gestiones();
+
+        $gestion->departamento = $request->departamento;
+        $gestion->titulo = $request->titulo;
+        $gestion->nombre_contacto = $request->nombre_contacto;
+        $gestion->telefono_contacto = $request->telefono_contacto;
+        $gestion->email_contacto = $request->email_contacto;
+        $gestion->descripcion = $request->descripcion;
+        $gestion->estado = 'pendiente';
+        //dd($gestion);
+        $gestion->save();
+        return redirect()->route('gestiones.nueva')
+            ->with('success', 'Solicitud registrada correctamente.');
+    }
+
     public function agendarvisita($id)
     {
         $gestion = Gestion::findOrFail($id);
