@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\gestiones;
+use App\Mail\NuevaGestionMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class GestionesController extends Controller
@@ -56,6 +58,13 @@ class GestionesController extends Controller
         $gestion->email_contacto = $request->email_contacto;
         $gestion->estado = 'pendiente'; // opcional si tienes este campo
         $gestion->save();
+
+        //enviar correo
+        //Mail::to('gestionedificios@serviciosglobalesrv.cl')->send(new NuevaGestionMail($gestion));
+        Mail::send('emails.nueva_gestion', ['gestion' => $gestion], function($message){
+            $message->to('gestionedificios@serviciosglobalesrv.cl')->subject('Nueva Solicitud');
+        });
+
 
         return redirect()->route('gestiones.index')
             ->with('success', 'Solicitud registrada correctamente.');
