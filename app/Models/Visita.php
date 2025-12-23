@@ -13,8 +13,10 @@ class Visita extends Model
         'gestion_id',
         'fecha_visita',
         'hora_visita',
+        'comentario',
         'estado'
     ];
+
 
     public function gestion()
     {

@@ -26,6 +26,9 @@ Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])-
 Route::get('/gestiones/resueltas', [GestionesController::class, 'resueltas'])->name('gestiones.resueltas');
 Route::get('/gestiones/nueva', [GestionesController::class, 'nueva'])->name('gestiones.nueva');
 Route::post('/gestiones/nuevastore', [GestionesController::class, 'nuevastore'])->name('gestiones.nuevastore');
+
+//Funciona para finalizar gestiones
+Route::post('/gestiones/{id}/finalizar',[GestionesController::class, 'finalizar'])->name('gestiones.finalizar');
 Route::resource('gestiones', GestionesController::class);
 /*Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');*/
 

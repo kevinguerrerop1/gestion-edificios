@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\gestiones;
+use App\Models\Visita;
 use App\Mail\NuevaGestionMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class GestionesController extends Controller
 
     public function resueltas()
     {
-        $gestiones = Gestiones::where('estado','resuelto')
+        $gestiones = Gestiones::where('estado','finalizada')
             ->orderBy('id','desc')->get();
             //dd($gestiones);
         return view('gestiones.resueltas', compact('gestiones'));
@@ -132,5 +133,33 @@ class GestionesController extends Controller
     public function destroy(gestiones $gestiones)
     {
         //
+    }
+
+    public function finalizar(Request $request, $id)
+    {
+        $request->validate([
+            'comentario' => 'required|min:5'
+        ]);
+
+        // 1️⃣ Buscar gestión
+        $gestion = Gestiones::findOrFail($id);
+
+        // 2️⃣ Registrar cierre en historial (visitas)
+        Visita::create([
+            'gestion_id'   => $gestion->id,
+            'fecha_visita' => now()->toDateString(),
+            'hora_visita'  => now()->toTimeString(),
+            'comentario'   => $request->comentario,
+            'estado'       => 'finalizada'
+        ]);
+
+        // 3️⃣ Cambiar estado de la gestión
+        $gestion->update([
+            'estado' => 'finalizada'
+        ]);
+
+        return redirect()
+            ->route('visitas.historial', $gestion->id)
+            ->with('success', 'Servicio finalizado correctamente');
     }
 }

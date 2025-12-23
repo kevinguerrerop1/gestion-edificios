@@ -47,6 +47,31 @@
         @endforelse
     </div>
 </div>
+@if($gestion->estado !== 'finalizada')
+
+<form method="POST"
+      action="{{ route('gestiones.finalizar', $gestion->id) }}"
+      class="mt-4 p-3 border rounded bg-light">
+
+    @csrf
+
+    <h5 class="mb-3">🔒 Finalizar servicio</h5>
+
+    <div class="mb-3">
+        <label class="form-label">Comentario de cierre</label>
+        <textarea name="comentario"
+                  class="form-control"
+                  rows="3"
+                  required></textarea>
+    </div>
+
+    <button class="btn btn-danger">
+        Finalizar servicio
+    </button>
+
+</form>
+@endif
+
 
 </div>
 @endsection
