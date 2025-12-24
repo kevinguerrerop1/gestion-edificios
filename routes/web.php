@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GestionesController;
 use App\Http\Controllers\VisitaController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +24,7 @@ Auth::routes();
 Route::get('/gestiones/nueva', [GestionesController::class, 'nueva'])->name('gestiones.nueva');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');
     Route::get('/gestiones/resueltas', [GestionesController::class, 'resueltas'])->name('gestiones.resueltas');
     Route::post('/gestiones/nuevastore', [GestionesController::class, 'nuevastore'])->name('gestiones.nuevastore');
