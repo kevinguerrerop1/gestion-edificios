@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h2 class="mb-4">
-            Listado de Solicitudes
+            Listado de Solicitudes Resueltas
             <a href="{{ route('gestiones.create') }}" class="btn btn-success float-end">
                 Nueva Solicitud
             </a>
