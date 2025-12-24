@@ -19,30 +19,20 @@ Route::get('/', function () {
     //phpinfo();
     return redirect()->route('login');
 });
-
 Auth::routes();
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');
-Route::get('/gestiones/resueltas', [GestionesController::class, 'resueltas'])->name('gestiones.resueltas');
 Route::get('/gestiones/nueva', [GestionesController::class, 'nueva'])->name('gestiones.nueva');
-Route::post('/gestiones/nuevastore', [GestionesController::class, 'nuevastore'])->name('gestiones.nuevastore');
 
-//Funciona para finalizar gestiones
-Route::post('/gestiones/{id}/finalizar',[GestionesController::class, 'finalizar'])->name('gestiones.finalizar');
-Route::resource('gestiones', GestionesController::class);
-/*Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');*/
-
-Route::get('/gestiones/{id}/visitas/crear', [VisitaController::class, 'create'])
-    ->name('visitas.create');
-
-Route::post('/gestiones/{id}/visitas', [VisitaController::class, 'store'])
-    ->name('visitas.store');
-
-Route::get('/gestiones/{id}/visitas/historial', [VisitaController::class, 'historial'])
-    ->name('visitas.historial');
-
-
-//Dejara ca para el login
 Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');
+    Route::get('/gestiones/resueltas', [GestionesController::class, 'resueltas'])->name('gestiones.resueltas');
+    Route::post('/gestiones/nuevastore', [GestionesController::class, 'nuevastore'])->name('gestiones.nuevastore');
 
+    //Funciona para finalizar gestiones
+    Route::post('/gestiones/{id}/finalizar',[GestionesController::class, 'finalizar'])->name('gestiones.finalizar');
+    Route::resource('gestiones', GestionesController::class);
+    /*Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');*/
+    Route::get('/gestiones/{id}/visitas/crear', [VisitaController::class, 'create'])->name('visitas.create');
+    Route::post('/gestiones/{id}/visitas', [VisitaController::class, 'store'])->name('visitas.store');
+    Route::get('/gestiones/{id}/visitas/historial', [VisitaController::class, 'historial'])->name('visitas.historial');
 });
