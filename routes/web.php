@@ -17,7 +17,7 @@ use App\Http\Controllers\VisitaController;
 
 Route::get('/', function () {
     //phpinfo();
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Auth::routes();
