@@ -24,9 +24,10 @@
                         Estado:
                         <span class="badge
                             @if($v->estado == 'pendiente') bg-warning text-dark
+                            @elseif($v->estado == 'en_proceso') bg-info text-dark
                             @elseif($v->estado == 'realizada') bg-success
                             @else bg-secondary @endif">
-                            {{ ucfirst($v->estado) }}
+                            {{ ucfirst(str_replace('_', ' ', $v->estado)) }}
                         </span>
                     </p>
                 </div>

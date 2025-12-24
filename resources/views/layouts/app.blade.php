@@ -79,7 +79,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" href="/gestiones">Nuevas</a></li>
-                                    <li><a class="dropdown-item" href="/gestiones/pendientes">Pendientes</a></li>
+                                    <li><a class="dropdown-item" href="/gestiones/pendientes">En Proceso</a></li>
                                     <li><a class="dropdown-item" href="/gestiones/resueltas">Finalizadas</a></li>
                                     <li><a class="dropdown-item" href="/gestiones">Todas</a></li>
                                 </ul>

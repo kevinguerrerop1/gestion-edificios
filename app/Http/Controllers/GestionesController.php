@@ -18,7 +18,7 @@ class GestionesController extends Controller
 
     public function pendientes()
     {
-        $gestiones = Gestiones::where('estado','pendiente')
+        $gestiones = Gestiones::where('estado','en_proceso')
             ->orderBy('id','desc')->get();
             //dd($gestiones);
         return view('gestiones.pendientes', compact('gestiones'));

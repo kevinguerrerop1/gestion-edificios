@@ -35,13 +35,29 @@ class VisitaController extends Controller
             'gestion_id' => $gestion->id,
             'fecha_visita' => $request->fecha_visita,
             'hora_visita' => $request->hora_visita,
-            'estado' => 'pendiente'
+            'estado' => 'en_proceso'
         ]);
-        //dd($gestion);
 
-        if (!empty($gestion->email_contacto)) {
+        //PASAR GESTIÓN A EN PROCESO (solo si aún no lo está)
+        if ($gestion->estado === 'pendiente') {
+            $gestion->update([
+                'estado' => 'en_proceso'
+            ]);
+        }
+
+        /*if (!empty($gestion->email_contacto)) {
             Mail::to($gestion->email_contacto)->send(
                 new VisitaConfirmada($gestion, $request->fecha_visita, $request->hora_visita)
+            );
+        }*/
+            // Envío de correo
+        if (!empty($gestion->email_contacto)) {
+            Mail::to($gestion->email_contacto)->send(
+                new VisitaConfirmada(
+                    $gestion,
+                    $request->fecha_visita,
+                    $request->hora_visita
+                )
             );
         }
 
