@@ -21,13 +21,14 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 Auth::routes();
+
 Route::get('/gestiones/nueva', [GestionesController::class, 'nueva'])->name('gestiones.nueva');
+Route::post('/gestiones/nuevastore', [GestionesController::class, 'nuevastore'])->name('gestiones.nuevastore');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');
     Route::get('/gestiones/resueltas', [GestionesController::class, 'resueltas'])->name('gestiones.resueltas');
-    Route::post('/gestiones/nuevastore', [GestionesController::class, 'nuevastore'])->name('gestiones.nuevastore');
 
     //Funciona para finalizar gestiones
     Route::post('/gestiones/{id}/finalizar',[GestionesController::class, 'finalizar'])->name('gestiones.finalizar');

@@ -88,6 +88,12 @@ class GestionesController extends Controller
         $gestion->estado = 'pendiente';
         //dd($gestion);
         $gestion->save();
+
+        //Enviar correo
+        Mail::send('emails.nueva_gestion', ['gestion' => $gestion], function($message){
+            $message->to('gestionedificios@serviciosglobalesrv.cl')->subject('Nueva Solicitud');
+        });
+
         return redirect()->route('gestiones.nueva')
             ->with('success', 'Solicitud registrada correctamente.');
     }
