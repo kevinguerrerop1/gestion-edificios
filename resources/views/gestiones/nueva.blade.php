@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+{{-- Oculta la barra de navegación --}}
+@php
+    $hideNavbar = true;
+@endphp
 @section('content')
     <div class="container py-4">
         <div class="row justify-content-center">
