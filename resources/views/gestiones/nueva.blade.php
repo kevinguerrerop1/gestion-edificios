@@ -37,8 +37,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Teléfono</label>
-                                                <input type="tel" name="telefono_contacto" class="form-control"
-                                                        placeholder="Ej: +569 1234 5678" required>
+                                                <input type="text" name="telefono_contacto" id="telefono_contacto" class="form-control" value="+569" maxlength="12" required>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Correo</label>
@@ -69,4 +68,12 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('telefono_contacto').addEventListener('input', function () {
+            if (!this.value.startsWith('+569')) {
+                this.value = '+569';
+            }
+            this.value = this.value.replace(/[^0-9+]/g, '');
+        });
+    </script>
 @endsection
