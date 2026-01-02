@@ -73,9 +73,13 @@ class GestionesController extends Controller
             ->with('success', 'Solicitud registrada correctamente.');
     }
 
-    public function nueva(){
-        return view('gestiones.nueva');
+    public function nueva($edificio)
+    {
+        $edificio = Edificio::findOrFail($edificio);
+        //dd($edificio);
+        return view('gestiones.nueva', compact('edificio'));
     }
+
 
 
 
@@ -83,6 +87,7 @@ class GestionesController extends Controller
 
         $gestion = new gestiones();
 
+        $gestion->edificio_id = $request->edificio_id;
         $gestion->departamento = $request->departamento;
         $gestion->titulo = $request->titulo;
         $gestion->nombre_contacto = $request->nombre_contacto;
@@ -98,7 +103,7 @@ class GestionesController extends Controller
             $message->to('gestionedificios@serviciosglobalesrv.cl')->subject('Nueva Solicitud');
         });
 
-        return redirect()->route('gestiones.nueva')
+        return redirect()->route('gestiones.nueva', $request->edificio_id)
             ->with('success', 'Solicitud registrada correctamente.');
     }
 

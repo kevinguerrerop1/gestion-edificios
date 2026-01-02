@@ -24,6 +24,10 @@
                                         </p>
                                         <form action="{{ route('gestiones.nuevastore') }}" method="POST">
                                             @csrf
+                                            <div class="alert alert-secondary text-center">
+                                                🏢 Edificio: <strong>{{ $edificio->nombre }}</strong>
+                                            </div>
+                                            <input type="hidden" name="edificio_id" value="{{ $edificio->id }}">
                                             <div class="mb-3">
                                                 <label class="form-label">Departamento</label>
                                                 <input type="text" name="departamento" class="form-control"
