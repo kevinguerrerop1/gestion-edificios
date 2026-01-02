@@ -75,6 +75,7 @@
                                         <li><a class="dropdown-item" href="/gestiones/pendientes">En Proceso</a></li>
                                         <li><a class="dropdown-item" href="/gestiones/resueltas">Finalizadas</a></li>
                                         <li><a class="dropdown-item" href="/gestiones">Todas</a></li>
+                                        <li><a class="dropdown-item" href="/edificios">Edificios</a></li>
                                     </ul>
                                 </li>
 

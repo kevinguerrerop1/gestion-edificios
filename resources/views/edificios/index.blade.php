@@ -73,19 +73,10 @@
                                 </a>
 
                                 <a href="{{ route('edificios.qr.imprimir', $edificio->id) }}"
-   class="btn btn-sm btn-danger"
-   target="_blank">
-   🖨 Imprimir QR
-</a>
-
-
-
-                                <a href="{{ route('edificios.qr.imprimir', $edificio->id) }}"
-   class="btn btn-sm btn-outline-primary">
-   🧾 Descargar QR
-</a>
-
-
+                                    class="btn btn-sm btn-danger"
+                                    target="_blank">
+                                    🖨 Imprimir QR
+                                </a>
                             </td>
                         </tr>
                     @empty

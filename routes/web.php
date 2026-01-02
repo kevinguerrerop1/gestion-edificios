@@ -25,6 +25,9 @@ Auth::routes();
 
 Route::get('/gestiones/nueva', [GestionesController::class, 'nueva'])->name('gestiones.nueva');
 Route::post('/gestiones/nuevastore', [GestionesController::class, 'nuevastore'])->name('gestiones.nuevastore');
+Route::get('gestiones/nueva/{edificio}', [GestionesController::class, 'nueva'])->name('gestiones.nueva');
+Route::get('edificios/{id}/qr', [EdificioController::class, 'qr'])->name('edificios.qr');
+Route::get('/edificios/{id}/qr/pdf', [EdificioController::class, 'qrPdf'])->name('edificios.qr.imprimir');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -40,13 +43,4 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gestiones/{id}/visitas/historial', [VisitaController::class, 'historial'])->name('visitas.historial');
 
     Route::resource('edificios', EdificioController::class);
-    Route::get('gestiones/nueva/{edificio}', [GestionesController::class, 'nueva'])
-    ->name('gestiones.nueva');
-    Route::get('edificios/{id}/qr', [EdificioController::class, 'qr'])
-    ->name('edificios.qr');
-    Route::get('/edificios/{id}/qr/pdf', [EdificioController::class, 'qrPdf'])
-    ->name('edificios.qr.imprimir');
-
-
-
 });
