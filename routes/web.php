@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GestionesController;
 use App\Http\Controllers\VisitaController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\EdificioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,4 +38,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gestiones/{id}/visitas/crear', [VisitaController::class, 'create'])->name('visitas.create');
     Route::post('/gestiones/{id}/visitas', [VisitaController::class, 'store'])->name('visitas.store');
     Route::get('/gestiones/{id}/visitas/historial', [VisitaController::class, 'historial'])->name('visitas.historial');
+
+    Route::resource('edificios', EdificioController::class);
+    Route::get('gestiones/nueva/{edificio}', [GestionesController::class, 'nueva'])
+    ->name('gestiones.nueva');
+
 });

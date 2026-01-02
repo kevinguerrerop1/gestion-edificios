@@ -21,4 +21,10 @@ class gestiones extends Model
     {
         return $this->hasMany(\App\Models\Visita::class, 'gestion_id');
     }
+
+    public function edificio()
+    {
+        return $this->belongsTo(Edificio::class);
+    }
+
 }

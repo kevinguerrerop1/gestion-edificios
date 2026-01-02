@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\gestiones;
 use App\Models\Visita;
+use App\Models\Edificio;
 use App\Mail\NuevaGestionMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
@@ -34,12 +35,14 @@ class GestionesController extends Controller
 
     public function create()
     {
-        return view('gestiones.create');
+        $edificios = Edificio::orderBy('nombre')->get();
+        return view('gestiones.create', compact('edificios'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'edificio_id'        => 'required|exists:edificios,id',
             'departamento'      => 'required',
             'titulo'            => 'required',
             'descripcion'       => 'required',
@@ -49,6 +52,7 @@ class GestionesController extends Controller
         ]);
 
         $gestion = new gestiones();
+        $gestion->edificio_id       = $request->edificio_id;
         $gestion->departamento = $request->departamento;
         $gestion->titulo = $request->titulo;
         $gestion->descripcion = $request->descripcion;

@@ -13,6 +13,14 @@
                     <div class="card-body p-4">
                         <form action="{{ route('gestiones.store') }}" method="POST">
                             @csrf
+                            <select name="edificio_id" class="form-select" required>
+                                <option value="">Seleccione edificio</option>
+                                @foreach($edificios as $edificio)
+                                    <option value="{{ $edificio->id }}">
+                                        {{ $edificio->nombre }} - {{ $edificio->direccion }}
+                                    </option>
+                                @endforeach
+                            </select>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">🏢 Departamento</label>
                                 <input type="text" name="departamento" class="form-control" placeholder="Ej: 502B" required>
