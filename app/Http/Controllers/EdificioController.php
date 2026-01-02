@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Edificio;
 use Illuminate\Http\Request;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
+
 class EdificioController extends Controller
 {
     /**
@@ -85,4 +89,56 @@ class EdificioController extends Controller
     {
         //
     }
+
+    public function qr($id)
+{
+    $edificio = Edificio::findOrFail($id);
+
+    $url = route('gestiones.nueva', $edificio->id);
+
+    $qrSvg = QrCode::format('svg')
+        ->size(300)
+        ->generate($url);
+
+    return view('edificios.qr', compact('edificio', 'url', 'qrSvg'));
+}
+
+    public function imprimirQR($id)
+    {
+        $edificio = Edificio::findOrFail($id);
+
+        $url = route('gestiones.nueva', $edificio->id);
+
+        QrCode::format('svg')
+    ->size(300)
+    ->errorCorrection('H')
+    ->encoding('UTF-8')
+    ->generate($url);
+
+        $pdf = Pdf::loadView('edificios.qr', compact('edificio', 'qr'));
+
+        return $pdf->download("QR-{$edificio->nombre}.pdf");
+    }
+
+    public function qrPdf($id)
+    {
+        $edificio = Edificio::findOrFail($id);
+
+        // URL a donde apunta el QR (ej: formulario "nueva")
+        $url = route('gestiones.nueva', $edificio->id);
+
+        // Generar QR en base64 (evita problemas con imagick)
+        $qr = base64_encode(
+            QrCode::format('svg')
+    ->size(300)
+    ->errorCorrection('H')
+    ->encoding('UTF-8')
+    ->generate($url)
+        );
+
+        $pdf = Pdf::loadView('edificios.qr_pdf', compact('edificio', 'qr'));
+
+        return $pdf->download('QR_edificio_'.$edificio->id.'.pdf');
+}
+
 }

@@ -64,8 +64,28 @@
 
                                 <a href="{{ route('gestiones.nueva', $edificio->id) }}"
                                     class="btn btn-sm btn-outline-success">
-                                    QR / Solicitud
+                                    Solicitud
                                 </a>
+
+                                <a href="{{ route('edificios.qr', $edificio->id) }}"
+                                    class="btn btn-sm btn-outline-dark">
+                                    📱 QR
+                                </a>
+
+                                <a href="{{ route('edificios.qr.imprimir', $edificio->id) }}"
+   class="btn btn-sm btn-danger"
+   target="_blank">
+   🖨 Imprimir QR
+</a>
+
+
+
+                                <a href="{{ route('edificios.qr.imprimir', $edificio->id) }}"
+   class="btn btn-sm btn-outline-primary">
+   🧾 Descargar QR
+</a>
+
+
                             </td>
                         </tr>
                     @empty

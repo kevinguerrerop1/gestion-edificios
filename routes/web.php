@@ -42,5 +42,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('edificios', EdificioController::class);
     Route::get('gestiones/nueva/{edificio}', [GestionesController::class, 'nueva'])
     ->name('gestiones.nueva');
+    Route::get('edificios/{id}/qr', [EdificioController::class, 'qr'])
+    ->name('edificios.qr');
+    Route::get('/edificios/{id}/qr/pdf', [EdificioController::class, 'qrPdf'])
+    ->name('edificios.qr.imprimir');
+
+
 
 });
