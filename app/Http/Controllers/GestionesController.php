@@ -6,6 +6,7 @@ use App\Models\gestiones;
 use App\Models\Visita;
 use App\Models\Edificio;
 use App\Mail\NuevaGestionMail;
+use App\Mail\PagoGestionMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
@@ -83,10 +84,19 @@ class GestionesController extends Controller
 
 
 
-    public function nuevastore(Request $request){
+    public function nuevastore(Request $request)
+    {
+        $request->validate([
+            'edificio_id'      => 'required|exists:edificios,id',
+            'departamento'     => 'required',
+            'titulo'           => 'required',
+            'descripcion'      => 'required',
+            'nombre_contacto'  => 'required',
+            'telefono_contacto'=> 'required',
+            'email_contacto'   => 'required|email',
+        ]);
 
-        $gestion = new gestiones();
-
+        $gestion = new Gestiones();
         $gestion->edificio_id = $request->edificio_id;
         $gestion->departamento = $request->departamento;
         $gestion->titulo = $request->titulo;
@@ -95,16 +105,21 @@ class GestionesController extends Controller
         $gestion->email_contacto = $request->email_contacto;
         $gestion->descripcion = $request->descripcion;
         $gestion->estado = 'pendiente';
-        //dd($gestion);
         $gestion->save();
 
-        //Enviar correo
-        Mail::send('emails.nueva_gestion', ['gestion' => $gestion], function($message){
-            $message->to('gestionedificios@serviciosglobalesrv.cl')->subject('Nueva Solicitud');
+        /* 📩 1. Correo interno (administración) */
+        Mail::send('emails.nueva_gestion', ['gestion' => $gestion], function ($message) {
+            $message->to('gestionedificios@serviciosglobalesrv.cl')
+                    ->subject('Nueva Solicitud de Mantención');
         });
 
-        return redirect()->route('gestiones.nueva', $request->edificio_id)
-            ->with('success', 'Solicitud registrada correctamente.');
+        /* 💳 2. Correo de pago al inquilino */
+        Mail::to($gestion->email_contacto)
+            ->send(new PagoGestionMail($gestion));
+
+        return redirect()
+            ->route('gestiones.nueva', $request->edificio_id)
+            ->with('success', 'Solicitud registrada correctamente. Revisa tu correo para el pago.');
     }
 
     public function agendarvisita($id)
