@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Título del problema</label>
+                            <label class="form-label">Trabajo Solicitado</label>
                             <input type="text"
                                 name="titulo"
                                 class="form-control bg-light"
