@@ -1,11 +1,11 @@
 <?php
 
     return [
-        'empresa' => 'Servicios Globales',
-        'banco' => 'Banco Estado',
+        'empresa' => 'Servicios Globales RV',
+        'banco' => 'Banco BCI',
         'tipo_cuenta' => 'Cuenta Corriente',
-        'numero_cuenta' => '12345678',
-        'rut' => '76.123.456-7',
+        'numero_cuenta' => '97612847',
+        'rut' => '78.201.133-2',
         'correo' => 'pagos@serviciosglobalesrv.cl',
-        'monto_base' => 25000
+        'monto_base' => 50000
     ];

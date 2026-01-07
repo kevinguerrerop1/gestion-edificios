@@ -18,7 +18,7 @@ class EdificioController extends Controller
      */
     public function index()
     {
-        $edificios = Edificio::withCount('gestiones')->orderBy('nombre')->get();
+        $edificios = Edificio::withCount('gestiones')->orderBy('id')->get();
 
         return view('edificios.index', compact('edificios'));
     }
@@ -43,12 +43,14 @@ class EdificioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre'    => 'required|string|max:255',
             'direccion' => 'nullable|string|max:255',
-            'ciudad' => 'nullable|string|max:255',
+            'comuna'    => 'nullable|string|max:255',
         ]);
 
-        Edificio::create($request->only('nombre', 'direccion', 'ciudad'));
+        Edificio::create(
+            $request->only('nombre', 'direccion', 'comuna')
+        );
 
         return redirect()
             ->route('edificios.index')

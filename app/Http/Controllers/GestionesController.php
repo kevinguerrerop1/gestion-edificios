@@ -14,14 +14,14 @@ class GestionesController extends Controller
 {
     public function index()
     {
-        $gestiones = gestiones::orderBy('id','desc')->get();
+        $gestiones = Gestiones::orderBy('created_at', 'desc')->get();
         return view('gestiones.index', compact('gestiones'));
     }
 
     public function pendientes()
     {
         $gestiones = Gestiones::where('estado','en_proceso')
-            ->orderBy('id','desc')->get();
+            ->orderBy('created_at', 'desc')->get();
             //dd($gestiones);
         return view('gestiones.pendientes', compact('gestiones'));
     }
@@ -29,7 +29,7 @@ class GestionesController extends Controller
     public function resueltas()
     {
         $gestiones = Gestiones::where('estado','finalizada')
-            ->orderBy('id','desc')->get();
+            ->orderBy('created_at', 'desc')->get();
             //dd($gestiones);
         return view('gestiones.resueltas', compact('gestiones'));
     }

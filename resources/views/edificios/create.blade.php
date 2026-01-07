@@ -50,15 +50,16 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Ciudad</label>
+                            <label class="form-label">Comuna</label>
                             <input
                                 type="text"
-                                name="ciudad"
+                                name="comuna"
                                 class="form-control"
-                                placeholder="Ej: Santiago"
-                                value="{{ old('ciudad') }}"
+                                placeholder="Ej: Ñuñoa"
+                                value="{{ old('comuna') }}"
                             >
                         </div>
+
 
                         <div class="d-flex justify-content-between">
                             <a href="{{ route('edificios.index') }}" class="btn btn-secondary">

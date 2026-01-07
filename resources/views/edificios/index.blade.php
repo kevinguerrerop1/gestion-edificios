@@ -25,7 +25,7 @@
                         <th>#</th>
                         <th>Nombre</th>
                         <th>Dirección</th>
-                        <th>Ubicación</th>
+                        <th>Ubicacion</th>
                         <th>Solicitudes</th>
                         <th class="text-end">Acciones</th>
                     </tr>
@@ -42,7 +42,7 @@
                             <td>{{ $edificio->direccion ?? '—' }}</td>
 
                             <td>
-                                {{ $edificio->ciudad ?? '—' }}
+                                {{ $edificio->comuna ?? '—' }}
                             </td>
 
                             <td>
@@ -52,15 +52,15 @@
                             </td>
 
                             <td class="text-end">
-                                <a href="{{ route('edificios.show', $edificio->id) }}"
+                                <!--a href="{{ route('edificios.show', $edificio->id) }}"
                                     class="btn btn-sm btn-outline-primary">
                                     Ver
-                                </a>
+                                </a-->
 
-                                <a href="{{ route('edificios.edit', $edificio->id) }}"
+                                <!--a href="{{ route('edificios.edit', $edificio->id) }}"
                                     class="btn btn-sm btn-outline-warning">
                                     Editar
-                                </a>
+                                </a-->
 
                                 <a href="{{ route('gestiones.nueva', $edificio->id) }}"
                                     class="btn btn-sm btn-outline-success">

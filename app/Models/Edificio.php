@@ -11,9 +11,7 @@ class Edificio extends Model
     protected $fillable = [
         'nombre',
         'direccion',
-        'comuna',
-        'ciudad',
-        'observacion'
+        'comuna'
     ];
 
     public function gestiones()
