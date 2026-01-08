@@ -87,16 +87,19 @@ class GestionesController extends Controller
     public function nuevastore(Request $request)
     {
         $request->validate([
-            'edificio_id'      => 'required|exists:edificios,id',
-            'departamento'     => 'required',
-            'titulo'           => 'required',
-            'descripcion'      => 'required',
-            'nombre_contacto'  => 'required',
-            'telefono_contacto'=> 'required',
-            'email_contacto'   => 'required|email',
+            'edificio_id'           => 'required|exists:edificios,id',
+            'departamento'          => 'required|string|max:100',
+            'titulo'                => 'required|string',
+            'nombre_contacto'       => 'required|string|max:100',
+            'telefono_contacto'     => 'required|string|max:15',
+            'email_contacto'        => 'required|email',
+            'descripcion'           => 'required|string',
+            'fecha_visita_estimada' => 'required|date|after:today',
+            'hora_visita_estimada'  => 'required'
         ]);
 
-        $gestion = new Gestiones();
+        $gestion = new gestiones();
+
         $gestion->edificio_id = $request->edificio_id;
         $gestion->departamento = $request->departamento;
         $gestion->titulo = $request->titulo;
@@ -104,23 +107,30 @@ class GestionesController extends Controller
         $gestion->telefono_contacto = $request->telefono_contacto;
         $gestion->email_contacto = $request->email_contacto;
         $gestion->descripcion = $request->descripcion;
+        $gestion->fecha_visita_estimada = $request->fecha_visita_estimada;
+        $gestion->hora_visita_estimada = $request->hora_visita_estimada;
         $gestion->estado = 'pendiente';
+
         $gestion->save();
 
-        /* 📩 1. Correo interno (administración) */
-        Mail::send('emails.nueva_gestion', ['gestion' => $gestion], function ($message) {
-            $message->to('gestionedificios@serviciosglobalesrv.cl')
-                    ->subject('Nueva Solicitud de Mantención');
-        });
+        // Enviar correo
+        Mail::send(
+            'emails.nueva_gestion',
+            ['gestion' => $gestion],
+            function ($message) {
+                $message->to('gestionedificios@serviciosglobalesrv.cl')
+                        ->subject('Nueva Solicitud de Mantención');
+            }
+        );
 
         /* 💳 2. Correo de pago al inquilino */
-        Mail::to($gestion->email_contacto)
-            ->send(new PagoGestionMail($gestion));
+        Mail::to($gestion->email_contacto)->send(new PagoGestionMail($gestion));
 
         return redirect()
             ->route('gestiones.nueva', $request->edificio_id)
-            ->with('success', 'Solicitud registrada correctamente. Revisa tu correo para el pago.');
+            ->with('success', 'Solicitud registrada correctamente. Revise su correo.');
     }
+
 
     public function agendarvisita($id)
     {
