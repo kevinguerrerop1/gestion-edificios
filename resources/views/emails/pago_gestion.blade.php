@@ -33,7 +33,7 @@
                         </p>
 
                         <p>
-                            Tu solicitud de mantencion ha sido registrada con éxito.
+                            Tu solicitud de mantenimiento ha sido registrada de forma correcta.
                         </p>
 
                         <hr style="border:none; border-top:1px solid #dddddd; margin:20px 0;">
@@ -49,7 +49,7 @@
                         <div style="background:#eef3f8; border-left:5px solid #1f4e78;
                                     padding:15px; margin:20px 0;">
                             <p style="margin:0 0 6px 0; font-weight:bold; color:#1f4e78;">
-                                Visita tecnica estimada
+                                Visita de servicio estimada
                             </p>
 
                             <p style="margin:0;">
@@ -71,12 +71,12 @@
 
                         <hr style="border:none; border-top:1px solid #dddddd; margin:20px 0;">
 
-                        <h3 style="color:#1f4e78;">Información de pago</h3>
+                        <h3 style="color:#1f4e78;">Datos de pago</h3>
                         <ul>
                             <li><strong>Empresa:</strong> {{ $pago['empresa'] }}</li>
                             <li><strong>Banco:</strong> {{ $pago['banco'] }}</li>
                             <li><strong>Tipo de cuenta:</strong> {{ $pago['tipo_cuenta'] }}</li>
-                            <li><strong>Número de cuenta:</strong> {{ $pago['numero_cuenta'] }}</li>
+                            <li><strong>Numero de cuenta:</strong> {{ $pago['numero_cuenta'] }}</li>
                             <li><strong>RUT:</strong> {{ $pago['rut'] }}</li>
                             <li><strong>Monto:</strong> ${{ number_format($pago['monto_base'], 0, ',', '.') }}</li>
                             <li><strong>Correo para comprobante:</strong> {{ $pago['correo'] }}</li>
@@ -98,28 +98,50 @@
                             </p>
 
                             <p style="margin:0;">
-                                La visita tecnica sera agendada unicamente despues de recibir
+                                La visita de servicio sera agendada solo luego de recibir
                                 y validar el comprobante de pago.
                             </p>
                         </div>
 
                         <!-- BOTON -->
                         <div style="text-align:center; margin:30px 0;">
-                            <a href="mailto:{{ $pago['correo'] }}?subject=Comprobante%20de%20pago%20-%20Gestión%20%23{{ $gestion->id }}"
+                            <a href="mailto:{{ $pago['correo'] }}?subject=Comprobante%20de%20pago%20-%20Gestion%20%23{{ $gestion->id }}"
                                style="background:#1f4e78; color:#ffffff; padding:14px 28px;
-                                      text-decoration:none; font-size:15px; font-weight:bold;
-                                      border-radius:6px; display:inline-block;">
-                                📎 Enviar comprobante
+                                    text-decoration:none; font-size:15px; font-weight:bold;
+                                    border-radius:6px; display:inline-block;">
+                                Enviar comprobante
                             </a>
                         </div>
 
                         <p>
-                            Recuerda indicar el número de gestión
+                            Recuerda indicar el numero de gestion
                             <strong>#{{ $gestion->id }}</strong> como referencia del pago.
                         </p>
 
                         <p>
                             Gracias por confiar en <strong>Servicios Globales RV</strong>.
+                        </p>
+
+                    </td>
+                </tr>
+
+                <!-- FOOTER -->
+                <tr>
+                    <td style="background:#f0f2f5; padding:15px; text-align:center;
+                               font-size:12px; color:#777777;">
+                        Este es un correo generado automaticamente, por favor no responder.<br>
+                        © {{ date('Y') }} Servicios Globales RV
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
                         </p>
 
                     </td>
