@@ -33,7 +33,7 @@
                         </p>
 
                         <p>
-                            Tu solicitud de mantenimiento ha sido registrada de forma correcta.
+                            Tu solicitud de mantenimiento fue registrada de forma correcta.
                         </p>
 
                         <hr style="border:none; border-top:1px solid #dddddd; margin:20px 0;">
@@ -107,8 +107,8 @@
                         <div style="text-align:center; margin:30px 0;">
                             <a href="mailto:{{ $pago['correo'] }}?subject=Comprobante%20de%20pago%20-%20Gestion%20%23{{ $gestion->id }}"
                                style="background:#1f4e78; color:#ffffff; padding:14px 28px;
-                                    text-decoration:none; font-size:15px; font-weight:bold;
-                                    border-radius:6px; display:inline-block;">
+                                      text-decoration:none; font-size:15px; font-weight:bold;
+                                      border-radius:6px; display:inline-block;">
                                 Enviar comprobante
                             </a>
                         </div>
@@ -130,28 +130,6 @@
                     <td style="background:#f0f2f5; padding:15px; text-align:center;
                                font-size:12px; color:#777777;">
                         Este es un correo generado automaticamente, por favor no responder.<br>
-                        © {{ date('Y') }} Servicios Globales RV
-                    </td>
-                </tr>
-
-            </table>
-
-        </td>
-    </tr>
-</table>
-
-</body>
-</html>
-                        </p>
-
-                    </td>
-                </tr>
-
-                <!-- FOOTER -->
-                <tr>
-                    <td style="background:#f0f2f5; padding:15px; text-align:center;
-                               font-size:12px; color:#777777;">
-                        Este es un correo automático, por favor no responder.<br>
                         © {{ date('Y') }} Servicios Globales RV
                     </td>
                 </tr>
