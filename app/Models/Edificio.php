@@ -18,4 +18,9 @@ class Edificio extends Model
     {
         return $this->hasMany(Gestiones::class);
     }
+
+    public function edificio()
+    {
+        return $this->belongsTo(Edificio::class, 'edificio_id');
+    }
 }

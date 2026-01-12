@@ -41,6 +41,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gestiones/{id}/visitas/crear', [VisitaController::class, 'create'])->name('visitas.create');
     Route::post('/gestiones/{id}/visitas', [VisitaController::class, 'store'])->name('visitas.store');
     Route::get('/gestiones/{id}/visitas/historial', [VisitaController::class, 'historial'])->name('visitas.historial');
+    Route::get('gestiones/edificio/{id}', [GestionesController::class, 'porEdificio'])->name('gestiones.por_edificio');
+
 
     Route::resource('edificios', EdificioController::class);
 });

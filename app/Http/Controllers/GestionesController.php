@@ -208,4 +208,18 @@ class GestionesController extends Controller
             ->route('visitas.historial', $gestion->id)
             ->with('success', 'Servicio finalizado correctamente');
     }
+
+    public function porEdificio($edificio_id)
+    {
+        $edificio = Edificio::findOrFail($edificio_id);
+
+        $gestiones = Gestiones::with('edificio')
+            ->where('edificio_id', $edificio_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('gestiones.por_edificio', compact('edificio', 'gestiones'));
+
+    }
+
 }

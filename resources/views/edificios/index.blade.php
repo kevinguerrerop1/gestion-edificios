@@ -77,6 +77,11 @@
                                     target="_blank">
                                     🖨 Imprimir QR
                                 </a>
+                                <a href="{{ route('gestiones.por_edificio', $edificio->id) }}"
+                                    class="btn btn-primary btn-sm">
+                                    🏢 Ver edificio
+                                </a>
+
                             </td>
                         </tr>
                     @empty
