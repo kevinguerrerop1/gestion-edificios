@@ -14,22 +14,28 @@ class GestionesController extends Controller
 {
     public function index()
     {
-        $gestiones = Gestiones::orderBy('created_at', 'desc')->get();
+        $gestiones = Gestiones::with('edificio')->orderBy('created_at', 'desc')->get();
+
         return view('gestiones.index', compact('gestiones'));
     }
 
     public function pendientes()
     {
-        $gestiones = Gestiones::where('estado','en_proceso')
-            ->orderBy('created_at', 'desc')->get();
+        $gestiones = Gestiones::with('edificio')
+            ->where('estado', 'en_proceso')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
             //dd($gestiones);
         return view('gestiones.pendientes', compact('gestiones'));
     }
 
     public function resueltas()
     {
-        $gestiones = Gestiones::where('estado','finalizada')
-            ->orderBy('created_at', 'desc')->get();
+        $gestiones = Gestiones::with('edificio')
+            ->where('estado', 'finalizada')
+            ->orderBy('created_at', 'desc')
+            ->get();
             //dd($gestiones);
         return view('gestiones.resueltas', compact('gestiones'));
     }

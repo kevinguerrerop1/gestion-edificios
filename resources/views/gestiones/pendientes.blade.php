@@ -17,6 +17,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Departamento</th>
+                        <th>Edificio</th>
                         <th>Título</th>
                         <th>Nombre Contacto</th>
                         <th>Teléfono</th>
@@ -30,6 +31,12 @@
                         <tr>
                             <td>{{ $g->id }}</td>
                             <td>{{ $g->departamento }}</td>
+                            <td>
+                                <strong>{{ $g->edificio->nombre ?? 'Sin edificio' }}</strong><br>
+                                <small class="text-muted">
+                                    {{ $g->edificio->direccion ?? '' }}
+                                </small>
+                            </td>
                             <td>{{ $g->titulo }}</td>
                             <td>{{ $g->nombre_contacto }}</td>
                             <td>{{ $g->telefono_contacto }}</td>
