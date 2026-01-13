@@ -119,7 +119,7 @@
                         [10, 25, 50, 100]
                     ],
 
-                    order: [[6, "desc"]], // orden por fecha
+                    order: false, // orden por fecha
 
                     language: {
                         lengthMenu: "Mostrar _MENU_ registros",
