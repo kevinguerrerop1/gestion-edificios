@@ -209,6 +209,7 @@ class GestionesController extends Controller
             ->with('success', 'Servicio finalizado correctamente');
     }
 
+    //VISTA SOLICITUDES POR EDIFICIO
     public function porEdificio($edificio_id)
     {
         $edificio = Edificio::findOrFail($edificio_id);
