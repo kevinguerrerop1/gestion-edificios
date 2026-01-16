@@ -17,10 +17,9 @@
         </div>
     @endif
 
-    <div class="card shadow-sm">
-        <div class="card-body table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
+    <div class="container mt-4">
+            <table id="tabla-gestiones" class="table table-striped table-hover">
+                <thead class="table-dark">
                     <tr>
                         <th>#</th>
                         <th>Nombre</th>
