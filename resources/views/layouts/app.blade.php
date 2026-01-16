@@ -31,82 +31,167 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
+    <style>
+        .bg-brand {
+            background-color: #1f4e78 !important;
+        }
+
+        .avatar-circle {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #1f4e78, #163a59);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255,255,255,.9);
+        }
+
+        .navbar-dark .navbar-nav .nav-link:hover,
+        .navbar-dark .navbar-nav .nav-link:focus {
+            color: #ffffff;
+        }
+
+        .navbar .dropdown-menu {
+            border-radius: 12px;
+            animation: dropdownFade .2s ease-in-out;
+        }
+
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1500px;
+            }
+        }
+
+    </style>
 
 </head>
 <body>
     <div id="app">
         @if (!isset($hideNavbar))
-            <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-                <div class="container">
-                    <a class="navbar-brand" href="{{ url('/') }}">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-brand shadow-sm">
+                <div class="container-fluid px-lg-4">
+                    {{-- Logo --}}
+                    <a class="navbar-brand fw-semibold d-flex align-items-center" href="{{ url('/') }}">
+                        <i class="bi bi-grid-fill me-2"></i>
                         {{ config('app.name', 'Laravel') }}
                     </a>
 
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent">
-                        <span class="navbar-toggler-icon"></span>
+                    {{-- Mobile --}}
+                    <button class="navbar-toggler border-0" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                        <i class="bi bi-list fs-2 text-white"></i>
                     </button>
 
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="collapse navbar-collapse" id="mainNavbar">
 
-                        @auth
-                        <ul class="navbar-nav me-auto">
+                        {{-- Left --}}
+                        <ul class="navbar-nav me-auto mt-3 mt-lg-0">
+
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url('/gestiones') }}">Inicio</a>
+                                <a class="nav-link active" href="/gestiones">
+                                    <i class="bi bi-house-door me-1"></i> Inicio
+                                </a>
                             </li>
-                        </ul>
-                        @endauth
 
-                        <ul class="navbar-nav ms-auto">
-                            @guest
-                                @if (Route::has('login'))
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('login') }}">Login</a>
-                                    </li>
-                                @endif
-                            @else
+                            {{-- Gestiones --}}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center"
+                                href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-folder2-open me-1"></i>
+                                    Gestiones
+                                </a>
 
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                        Gestiones
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="/gestiones">Nuevas</a></li>
-                                        <li><a class="dropdown-item" href="/gestiones/pendientes">En Proceso</a></li>
-                                        <li><a class="dropdown-item" href="/gestiones/resueltas">Finalizadas</a></li>
-                                        <li><a class="dropdown-item" href="/gestiones">Todas</a></li>
-                                        <li><a class="dropdown-item" href="/edificios">Edificios</a></li>
-                                    </ul>
-                                </li>
-
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                        {{ Auth::user()->name }}
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item"
-                                        href="{{ route('logout') }}"
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            Logout
+                                <ul class="dropdown-menu shadow-sm">
+                                    <li>
+                                        <a class="dropdown-item" href="/gestiones">
+                                            <i class="bi bi-list-task me-2"></i> Todas
                                         </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/gestiones/pendientes">
+                                            <i class="bi bi-hourglass-split me-2 text-warning"></i> En proceso
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/gestiones/resueltas">
+                                            <i class="bi bi-check-circle me-2 text-success"></i> Finalizadas
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
 
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                            @csrf
-                                        </form>
+                            {{-- Edificios --}}
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="/edificios">
+                                    <i class="bi bi-building me-1"></i>
+                                    Edificios
+                                </a>
+                            </li>
+
+                        </ul>
+
+                        {{-- Right --}}
+                        <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                            {{-- Usuario --}}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center"
+                                href="#" role="button" data-bs-toggle="dropdown">
+
+                                    <div class="avatar-circle me-2">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                     </div>
-                                </li>
-                            @endguest
+
+                                    <span class="d-lg-inline d-none">
+                                        {{ Auth::user()->name }}
+                                    </span>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                    <li>
+                                        <a class="dropdown-item text-danger"
+                                        href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <form id="logout-form" action="{{ route('logout') }}"
+                                    method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </li>
+
                         </ul>
                     </div>
                 </div>
             </nav>
         @endif
 
-
         <main class="py-4">
             @yield('content')
         </main>
+
         <script>
             $(document).ready(function() {
                 $('#tabla-gestiones').DataTable({
