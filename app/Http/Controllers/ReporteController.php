@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reporte;
-use App\Models\Gestiones;
+use App\Models\gestiones;
 use App\Models\Edificio;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
