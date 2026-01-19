@@ -30,11 +30,6 @@ Route::get('gestiones/nueva/{edificio}', [GestionesController::class, 'nueva'])-
 Route::get('edificios/{id}/qr', [EdificioController::class, 'qr'])->name('edificios.qr');
 Route::get('/edificios/{id}/qr/pdf', [EdificioController::class, 'qrPdf'])->name('edificios.qr.imprimir');
 
-Route::get('/reportes/solicitudes-sin-visita',[ReporteController::class, 'solicitudesSinVisita'])->name('reportes.solicitudes_sin_visita');
-Route::get('/reportes/gestiones-finalizadas',[ReporteController::class, 'gestionesFinalizadasPorEdificio'])->name('reportes.gestiones_finalizadas');
-Route::get('/reportes/gestiones-finalizadas/pdf',[ReporteController::class, 'gestionesFinalizadasPorEdificioPdf'])->name('reportes.gestiones_finalizadas.pdf');
-Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');
@@ -51,4 +46,9 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::resource('edificios', EdificioController::class);
+
+    Route::get('/reportes/solicitudes-sin-visita',[ReporteController::class, 'solicitudesSinVisita'])->name('reportes.solicitudes_sin_visita');
+    Route::get('/reportes/gestiones-finalizadas',[ReporteController::class, 'gestionesFinalizadasPorEdificio'])->name('reportes.gestiones_finalizadas');
+    Route::get('/reportes/gestiones-finalizadas/pdf',[ReporteController::class, 'gestionesFinalizadasPorEdificioPdf'])->name('reportes.gestiones_finalizadas.pdf');
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 });
