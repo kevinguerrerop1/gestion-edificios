@@ -126,6 +126,11 @@
                             <i class="bi bi-building me-1"></i> Edificios
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('reportes.index') }}" class="nav-link">
+                            📊 Reportes
+                        </a>
+                    </li>
 
                 </ul>
                 @endauth

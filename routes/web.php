@@ -5,6 +5,7 @@ use App\Http\Controllers\GestionesController;
 use App\Http\Controllers\VisitaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EdificioController;
+use App\Http\Controllers\ReporteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,11 @@ Route::post('/gestiones/nuevastore', [GestionesController::class, 'nuevastore'])
 Route::get('gestiones/nueva/{edificio}', [GestionesController::class, 'nueva'])->name('gestiones.nueva');
 Route::get('edificios/{id}/qr', [EdificioController::class, 'qr'])->name('edificios.qr');
 Route::get('/edificios/{id}/qr/pdf', [EdificioController::class, 'qrPdf'])->name('edificios.qr.imprimir');
+
+Route::get('/reportes/solicitudes-sin-visita',[ReporteController::class, 'solicitudesSinVisita'])->name('reportes.solicitudes_sin_visita');
+Route::get('/reportes/gestiones-finalizadas',[ReporteController::class, 'gestionesFinalizadasPorEdificio'])->name('reportes.gestiones_finalizadas');
+Route::get('/reportes/gestiones-finalizadas/pdf',[ReporteController::class, 'gestionesFinalizadasPorEdificioPdf'])->name('reportes.gestiones_finalizadas.pdf');
+Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
