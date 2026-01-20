@@ -45,72 +45,6 @@ class ReporteController extends Controller
         return view('reportes.index', compact('reportes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Reporte  $reporte
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Reporte $reporte)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Reporte  $reporte
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Reporte $reporte)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Reporte  $reporte
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Reporte $reporte)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Reporte  $reporte
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Reporte $reporte)
-    {
-        //
-    }
-
     public function solicitudesSinVisita()
     {
         $gestiones = Gestiones::with('edificio')
@@ -180,5 +114,19 @@ class ReporteController extends Controller
             $edificio->nombre . '-' .
             now()->format('d-m-Y') . '.pdf'
         );
+    }
+
+    public function sinVisitaPdf()
+    {
+        $gestiones = Gestiones::whereDoesntHave('visitas')
+            ->where('estado', 'pendiente')
+            ->with('edificio')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $pdf = Pdf::loadView('reportes.pdf.sin-visita', compact('gestiones'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('solicitudes_sin_visita_agendada.pdf');
     }
 }

@@ -8,7 +8,7 @@
     <form method="GET" action="{{ route('reportes.gestiones_finalizadas') }}">
         @if(request()->filled(['edificio_id','desde','hasta']))
             <div class="mb-3 text-end">
-                <a href="{{ route('reportes.gestiones_finalizadas.pdf', request()->all()) }}"class="btn btn-outline-danger">
+                <a href="{{ route('reportes.gestiones_finalizadas.pdf', request()->all()) }}" class="btn btn-outline-danger">
                     📄 Descargar PDF
                 </a>
             </div>
@@ -58,7 +58,7 @@
                 </span>
             </div>
             <div class="card-body p-0">
-                <table class="table table-striped mb-0">
+                <table id="tabla-gestiones" class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
                             <th>#</th>
