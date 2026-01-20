@@ -9,8 +9,7 @@
             <span class="badge bg-danger">{{ $visitas->count() }}</span>
         </h4>
 
-        <a href="{{ route('reportes.visitas-atrasadas.pdf') }}"
-           class="btn btn-outline-danger">
+        <a href="{{ route('reportes.visitas-atrasadas.pdf') }}" class="btn btn-outline-danger">
             📄 Descargar PDF
         </a>
     </div>
@@ -21,7 +20,7 @@
         </div>
     @else
         <div class="table-responsive shadow-sm">
-            <table class="table table-striped align-middle">
+            <table id="tabla-gestiones" class="table table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
                         <th>ID Gestión</th>
