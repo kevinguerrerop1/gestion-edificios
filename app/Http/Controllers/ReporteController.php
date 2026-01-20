@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reporte;
 use App\Models\gestiones;
 use App\Models\Edificio;
+use App\Models\Visita;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class ReporteController extends Controller
                 'id' => 'visitas_atrasadas',
                 'titulo' => 'Visitas atrasadas',
                 'descripcion' => 'Visitas no realizadas cuya fecha ya venció.',
-                'ruta' => '#',
+                'ruta' => route('reportes.visitas-atrasadas'),
                 'requiere_fechas' => false,
             ],
             [
@@ -47,7 +48,7 @@ class ReporteController extends Controller
 
     public function solicitudesSinVisita()
     {
-        $gestiones = Gestiones::with('edificio')
+        $gestiones = gestiones::with('edificio')
             ->whereDoesntHave('visitas')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -66,7 +67,7 @@ class ReporteController extends Controller
 
             $edificioSeleccionado = Edificio::find($request->edificio_id);
 
-            $gestiones = Gestiones::where('estado', 'finalizada')
+            $gestiones = gestiones::where('estado', 'finalizada')
                 ->where('edificio_id', $request->edificio_id)
                 ->whereBetween('created_at', [
                     Carbon::parse($request->desde)->startOfDay(),
@@ -93,7 +94,7 @@ class ReporteController extends Controller
 
         $edificio = Edificio::findOrFail($request->edificio_id);
 
-        $gestiones = Gestiones::where('estado', 'finalizada')
+        $gestiones = gestiones::where('estado', 'finalizada')
             ->where('edificio_id', $edificio->id)
             ->whereBetween('created_at', [
                 Carbon::parse($request->desde)->startOfDay(),
@@ -118,7 +119,7 @@ class ReporteController extends Controller
 
     public function sinVisitaPdf()
     {
-        $gestiones = Gestiones::whereDoesntHave('visitas')
+        $gestiones = gestiones::whereDoesntHave('visitas')
             ->where('estado', 'pendiente')
             ->with('edificio')
             ->orderBy('created_at', 'asc')
@@ -128,5 +129,30 @@ class ReporteController extends Controller
             ->setPaper('a4', 'landscape');
 
         return $pdf->download('solicitudes_sin_visita_agendada.pdf');
+    }
+
+    public function visitasAtrasadas()
+    {
+        $visitas = Visita::where('estado', '!=', 'finalizada')
+            ->whereDate('fecha_visita', '<', Carbon::today())
+            ->with(['gestion.edificio'])
+            ->orderBy('fecha_visita', 'asc')
+            ->get();
+
+        return view('reportes.visitas-atrasadas', compact('visitas'));
+    }
+
+    public function visitasAtrasadasPdf()
+    {
+        $visitas = Visita::where('estado', '!=', 'finalizada')
+            ->whereDate('fecha_visita', '<', Carbon::today())
+            ->with(['gestion.edificio'])
+            ->orderBy('fecha_visita', 'asc')
+            ->get();
+
+        $pdf = Pdf::loadView('reportes.pdf.visitas-atrasadas', compact('visitas'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('visitas_atrasadas.pdf');
     }
 }

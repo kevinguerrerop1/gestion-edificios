@@ -51,5 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reportes/gestiones-finalizadas',[ReporteController::class, 'gestionesFinalizadasPorEdificio'])->name('reportes.gestiones_finalizadas');
     Route::get('/reportes/gestiones-finalizadas/pdf',[ReporteController::class, 'gestionesFinalizadasPorEdificioPdf'])->name('reportes.gestiones_finalizadas.pdf');
     Route::get('/reportes/sin-visita/pdf', [ReporteController::class, 'sinVisitaPdf'])->name('reportes.sin-visita.pdf');
+    Route::get('/reportes/visitas-atrasadas', [ReporteController::class, 'visitasAtrasadas'])->name('reportes.visitas-atrasadas');
+    Route::get('/reportes/visitas-atrasadas/pdf', [ReporteController::class, 'visitasAtrasadasPdf'])->name('reportes.visitas-atrasadas.pdf');
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 });
