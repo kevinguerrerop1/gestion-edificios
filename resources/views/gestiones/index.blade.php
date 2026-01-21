@@ -48,14 +48,33 @@
                                     @if($g->estado == 'pendiente') bg-warning text-dark
                                     @elseif($g->estado == 'en_proceso') bg-info text-dark
                                     @elseif($g->estado == 'realizada') bg-success
+                                    @elseif ($g->estado == 'pagado') bg-success
                                     @else bg-secondary @endif">
                                     {{ ucfirst(str_replace('_', ' ', $g->estado)) }}
                                 </span>
                             </td>
                             <td>
-                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgendarVisita" data-gestion-id="{{ $g->id }}">
-                                    📅 Agendar
-                                </button>
+                                {{-- BOTÓN AGENDAR VISITA (solo si está PAGADO) --}}
+                                @if($g->estado === 'pagado')
+                                    <button class="btn btn-primary btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalAgendarVisita"
+                                            data-gestion-id="{{ $g->id }}">
+                                        📅 Agendar
+                                    </button>
+                                @endif
+                                {{-- BOTÓN CONFIRMAR PAGO (solo si está PENDIENTE) --}}
+                                @if($g->estado === 'pendiente')
+                                    <form action="{{ route('gestiones.pagar', $g->id) }}"
+                                        method="POST"
+                                        class="d-inline"
+                                        onsubmit="return confirm('¿Confirmar que el pago fue corroborado?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> Confirmar pago
+                                        </button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('visitas.historial', $g->id) }}" class="btn btn-warning btn-sm">Visitas</a>
                             </td>
                         </tr>

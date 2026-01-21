@@ -39,7 +39,7 @@ class VisitaController extends Controller
         ]);
 
         //PASAR GESTIÓN A EN PROCESO (solo si aún no lo está)
-        if ($gestion->estado === 'pendiente') {
+        if ($gestion->estado !== 'en_proceso') {
             $gestion->update([
                 'estado' => 'en_proceso'
             ]);

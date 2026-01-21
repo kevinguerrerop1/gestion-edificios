@@ -7,6 +7,7 @@ use App\Models\Visita;
 use App\Models\Edificio;
 use App\Mail\NuevaGestionMail;
 use App\Mail\PagoGestionMail;
+use App\Mail\PagoConfirmado;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
@@ -221,6 +222,38 @@ class GestionesController extends Controller
 
         return view('gestiones.por_edificio', compact('edificio', 'gestiones'));
 
+    }
+
+    public function marcarPagado(Request $request, $gestion_id)
+    {
+        $gestion = Gestiones::findOrFail($gestion_id);
+
+        if ($gestion->estado === 'pagado') {
+            return back()->with('info', 'La gestión ya se encuentra pagada');
+        }
+
+        // 1️⃣ Actualizar estado de la gestión
+        $gestion->update([
+            'estado' => 'pagado'
+        ]);
+
+        // 2️⃣ Guardar historial como visita
+        Visita::create([
+            'gestion_id'   => $gestion->id,
+            'fecha_visita' => now()->toDateString(),
+            'hora_visita'  => now()->toTimeString(),
+            'comentario'   => 'Pago corroborado por el sistema',
+            'estado'       => 'pagado'
+        ]);
+
+        // 3️⃣ Envío de correo
+        if (!empty($gestion->email_contacto)) {
+            Mail::to($gestion->email_contacto)->send(
+                new PagoConfirmado($gestion)
+            );
+        }
+
+        return back()->with('success', 'Pago confirmado y registrado en historial');
     }
 
 }
