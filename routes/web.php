@@ -53,5 +53,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reportes/sin-visita/pdf', [ReporteController::class, 'sinVisitaPdf'])->name('reportes.sin-visita.pdf');
     Route::get('/reportes/visitas-atrasadas', [ReporteController::class, 'visitasAtrasadas'])->name('reportes.visitas-atrasadas');
     Route::get('/reportes/visitas-atrasadas/pdf', [ReporteController::class, 'visitasAtrasadasPdf'])->name('reportes.visitas-atrasadas.pdf');
+    // Historial de una gestión (vista)
+    Route::get(
+        '/reportes/historial-gestion',
+        [ReporteController::class, 'historialGestion']
+    )->name('reportes.historial_gestion');
+
+    // Historial PDF
+    Route::get(
+        '/reportes/historial-gestion/{gestion}/pdf',
+        [ReporteController::class, 'historialGestionPdf']
+    )->name('reportes.historial_gestion_pdf');
+    // routes/web.php
+Route::get(
+    '/reportes/buscar-gestion',
+    [ReporteController::class, 'buscarGestion']
+)->name('reportes.buscar_gestion');
+
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 });

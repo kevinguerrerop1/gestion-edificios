@@ -1,55 +1,110 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+    .timeline {
+        position: relative;
+        margin-left: 20px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 9px;
+        width: 2px;
+        background: #dee2e6;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        top: 15px;
+    }
+
+    .timeline-content {
+        margin-left: 40px;
+    }
+</style>
 <div class="container">
-    <h3>Historial de visitas — Gestión #{{ $gestion->id }}</h3>
-    <a href="{{ route('visitas.create', $gestion->id) }}" class="btn btn-success mb-3"> + Nueva visita </a>
+
+    <h3 class="mb-3">
+        📜 Historial de visitas — Gestión #{{ $gestion->id }}
+    </h3>
+
+    {{-- Botón nueva visita --}}
+    <a href="{{ route('visitas.create', $gestion->id) }}"
+       class="btn btn-success mb-3">
+        ➕ Nueva visita
+    </a>
+
+    {{-- Mensaje de éxito --}}
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-    <div class="container mt-4">
-        <h4 class="mb-4">📜 Historial de visitas</h4>
-        <div class="list-group">
-            @forelse($visitas as $v)
-                <div class="list-group-item list-group-item-action mb-2 rounded shadow-sm">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">
-                            📅 {{ \Carbon\Carbon::parse($v->fecha_visita)->format('d-m-Y') }}
-                        </h5>
-                        <small class="text-muted">
-                            🕒 {{ \Carbon\Carbon::parse($v->hora_visita)->format('H:i') }}
-                        </small>
-                    </div>
-                    <p class="mb-1">
-                        Estado:
-                        <span class="badge
-                            @if($v->estado == 'pendiente') bg-warning text-dark
-                            @elseif($v->estado == 'en_proceso') bg-info text-dark
-                            @elseif($v->estado == 'realizada') bg-success
-                            @else bg-secondary @endif">
-                            {{ ucfirst(str_replace('_', ' ', $v->estado)) }}
-                        </span>
-                    </p>
-                </div>
-            @empty
-                <div class="alert alert-info">
-                    No hay visitas registradas aún.
-                </div>
-            @endforelse
+        <div class="alert alert-success">
+            {{ session('success') }}
         </div>
-    </div>
-    @if($gestion->estado !== 'finalizada')
-        <form method="POST" action="{{ route('gestiones.finalizar', $gestion->id) }}" class="mt-4 p-3 border rounded bg-light">
-            @csrf
-            <h5 class="mb-3">🔒 Finalizar servicio</h5>
-            <div class="mb-3">
-                <label class="form-label">Comentario de cierre</label>
-                <textarea name="comentario" class="form-control" rows="3" required></textarea>
-            </div>
-            <button class="btn btn-danger">
-                Finalizar servicio
-            </button>
-        </form>
     @endif
+
+    <div class="mt-4">
+    <h4 class="mb-4">📌 Línea de tiempo</h4>
+
+    <div class="timeline">
+
+        @forelse($visitas as $v)
+            <div class="timeline-item">
+
+                <div class="timeline-dot
+                    @if($v->estado === 'pendiente') bg-warning
+                    @elseif($v->estado === 'pagado') bg-success
+                    @elseif($v->estado === 'en_proceso') bg-info
+                    @elseif($v->estado === 'realizada') bg-success
+                    @elseif($v->estado === 'finalizada') bg-danger
+                    @else bg-secondary
+                    @endif">
+                </div>
+
+                <div class="timeline-content card shadow-sm">
+                    <div class="card-body py-3">
+
+                        <div class="d-flex justify-content-between">
+                            <strong>
+                                {{ ucfirst(str_replace('_', ' ', $v->estado)) }}
+                            </strong>
+                            <small class="text-muted">
+                                {{ \Carbon\Carbon::parse($v->fecha_visita)->format('d-m-Y') }}
+                                · {{ \Carbon\Carbon::parse($v->hora_visita)->format('H:i') }}
+                            </small>
+                        </div>
+
+                        @if(!empty($v->comentario))
+                            <p class="mt-2 mb-0 text-muted">
+                                📝 {{ $v->comentario }}
+                            </p>
+                        @endif
+
+                    </div>
+                </div>
+
+            </div>
+        @empty
+            <div class="alert alert-info">
+                No hay registros en la línea de tiempo aún.
+            </div>
+        @endforelse
+
+    </div>
+</div>
+
+
 </div>
 @endsection

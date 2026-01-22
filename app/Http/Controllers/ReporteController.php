@@ -41,6 +41,13 @@ class ReporteController extends Controller
                 'ruta' => route('reportes.gestiones_finalizadas'),
                 'requiere_fechas' => true,
             ],
+            [
+                'id' => 'historial_gestion',
+                'titulo' => 'Historial de gestión',
+                'descripcion' => 'Línea de tiempo completa de una gestión específica.',
+                'ruta' => route('reportes.historial_gestion'),
+                'requiere_fechas' => false,
+            ],
         ];
 
         return view('reportes.index', compact('reportes'));
@@ -155,4 +162,69 @@ class ReporteController extends Controller
 
         return $pdf->download('visitas_atrasadas.pdf');
     }
+
+    public function historialGestion(Request $request)
+    {
+        $gestiones = Gestiones::orderBy('id', 'desc')->get();
+
+        $gestion = null;
+        $visitas = collect();
+
+        if ($request->filled('gestion_id')) {
+            $gestion = Gestiones::findOrFail($request->gestion_id);
+
+            $visitas = Visita::where('gestion_id', $gestion->id)
+                ->orderBy('fecha_visita')
+                ->orderBy('hora_visita')
+                ->get();
+        }
+
+        return view('reportes.historial_gestion', compact(
+            'gestiones',
+            'gestion',
+            'visitas'
+        ));
+    }
+
+    public function historialGestionPdf($id)
+    {
+        $gestion = Gestiones::with('edificio')->findOrFail($id);
+
+        $visitas = Visita::where('gestion_id', $id)
+            ->orderBy('fecha_visita')
+            ->orderBy('hora_visita')
+            ->get();
+
+        $pdf = Pdf::loadView('reportes.pdf.historial_gestion', [
+            'gestion' => $gestion,
+            'visitas' => $visitas
+        ])->setPaper('A4', 'portrait');
+
+        return $pdf->download(
+            'historial-gestion-' . $gestion->id . '.pdf'
+        );
+    }
+
+    public function buscarGestion(Request $request)
+    {
+        $q = $request->get('q');
+
+        return Gestiones::with('edificio')
+            ->where('id', 'like', "%{$q}%")
+            ->orWhereHas('edificio', function ($query) use ($q) {
+                $query->where('nombre', 'like', "%{$q}%");
+            })
+            ->orderBy('id', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($g) {
+                return [
+                    'id' => $g->id,
+                    'text' => 'Gestión #' . $g->id . ' — ' . ($g->edificio->nombre ?? 'Sin edificio'),
+                ];
+            });
+    }
+
+
+
 }

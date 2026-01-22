@@ -75,7 +75,19 @@
                                         </button>
                                     </form>
                                 @endif
-                                <a href="{{ route('visitas.historial', $g->id) }}" class="btn btn-warning btn-sm">Visitas</a>
+                                {{-- BOTÓN FINALIZAR GESTION (solo si esta en proceso)--}}
+
+                                @if($g->estado === 'en_proceso')
+                                    <button class="btn btn-danger btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalFinalizarServicio"
+                                            data-gestion-id="{{ $g->id }}">
+                                        🔒 Finalizar
+                                    </button>
+                                @endif
+
+
+                                <a href="{{ route('visitas.historial', $g->id) }}" class="btn btn-warning btn-sm">Historial</a>
                             </td>
                         </tr>
                     @endforeach
@@ -84,80 +96,151 @@
         </div>
     </div>
     <!-- MODAL AGENDAR VISITA -->
-<div class="modal fade" id="modalAgendarVisita" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+    <div class="modal fade" id="modalAgendarVisita" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
 
-            <form id="formAgendarVisita"
-                action="{{ route('visitas.store', 0) }}"
-                method="POST">
-                @csrf
+                <form id="formAgendarVisita"
+                    action="{{ route('visitas.store', 0) }}"
+                    method="POST">
+                    @csrf
 
-                <div class="modal-header" style="background:#1f4e78;">
-                    <h5 class="modal-title text-white">📅 Agendar visita</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-
-                    <p class="text-muted small mb-3">
-                        La visita se agendará desde el día siguiente.
-                    </p>
-
-                    <div class="mb-3">
-                        <label class="form-label">Fecha</label>
-                        <input type="date"
-                               name="fecha_visita"
-                               class="form-control"
-                               min="{{ now()->addDay()->format('Y-m-d') }}"
-                               required>
+                    <div class="modal-header" style="background:#1f4e78;">
+                        <h5 class="modal-title text-white">📅 Agendar visita</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Hora</label>
-                        <select name="hora_visita" class="form-select" required>
-                            <option value="">Seleccione horario</option>
-                            @for ($h = 9; $h <= 18; $h++)
-                                <option value="{{ sprintf('%02d:00', $h) }}">
-                                    {{ sprintf('%02d:00', $h) }} hrs
-                                </option>
-                            @endfor
-                        </select>
-                        <small class="text-muted">
-                            Horario disponible: 09:00 a 18:00 hrs
-                        </small>
+                    <div class="modal-body">
+
+                        <p class="text-muted small mb-3">
+                            La visita se agendará desde el día siguiente.
+                        </p>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha</label>
+                            <input type="date"
+                                name="fecha_visita"
+                                class="form-control"
+                                min="{{ now()->addDay()->format('Y-m-d') }}"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Hora</label>
+                            <select name="hora_visita" class="form-select" required>
+                                <option value="">Seleccione horario</option>
+                                @for ($h = 9; $h <= 18; $h++)
+                                    <option value="{{ sprintf('%02d:00', $h) }}">
+                                        {{ sprintf('%02d:00', $h) }} hrs
+                                    </option>
+                                @endfor
+                            </select>
+                            <small class="text-muted">
+                                Horario disponible: 09:00 a 18:00 hrs
+                            </small>
+                        </div>
+
                     </div>
 
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            💾 Guardar visita
+                        </button>
+                    </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-success">
-                        💾 Guardar visita
-                    </button>
-                </div>
+                </form>
 
-            </form>
-
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- MODAL FINALIZAR VISITA -->
+    <div class="modal fade" id="modalFinalizarServicio" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <form id="formFinalizarServicio"
+                    method="POST"
+                    action="{{ route('gestiones.finalizar', 0) }}">
+                    @csrf
+
+                    <div class="modal-header" style="background:#dc3545;">
+                        <h5 class="modal-title text-white">
+                            🔒 Finalizar servicio
+                        </h5>
+                        <button type="button"
+                                class="btn-close btn-close-white"
+                                data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="text-muted small mb-3">
+                            Esta acción cerrará definitivamente la gestión.
+                        </p>
+
+                        <div class="mb-3">
+                            <label class="form-label">Comentario de cierre</label>
+                            <textarea name="comentario"
+                                    class="form-control"
+                                    rows="4"
+                                    required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                                class="btn btn-danger">
+                            🔒 Finalizar servicio
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    //Modal para agendar
+    document.addEventListener('DOMContentLoaded', function () {
 
-    const modal = document.getElementById('modalAgendarVisita');
-    const form  = document.getElementById('formAgendarVisita');
+        const modal = document.getElementById('modalAgendarVisita');
+        const form  = document.getElementById('formAgendarVisita');
 
-    modal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const gestionId = button.getAttribute('data-gestion-id');
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const gestionId = button.getAttribute('data-gestion-id');
 
-        // Reemplaza el 0 por el ID real
-        form.action = form.action.replace('/0', '/' + gestionId);
+            // Reemplaza el 0 por el ID real
+            form.action = form.action.replace('/0', '/' + gestionId);
+        });
+
     });
 
-});
+    //Modal para finalizar
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const modal = document.getElementById('modalFinalizarServicio');
+        const form  = document.getElementById('formFinalizarServicio');
+
+        if (!modal || !form) return;
+
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button   = event.relatedTarget;
+            const gestionId = button.getAttribute('data-gestion-id');
+
+            form.action = form.action.replace('/0', '/' + gestionId);
+        });
+
+    });
+
 </script>
 @endsection
