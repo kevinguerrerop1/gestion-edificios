@@ -48,6 +48,13 @@ class ReporteController extends Controller
                 'ruta' => route('reportes.historial_gestion'),
                 'requiere_fechas' => false,
             ],
+            [
+                'id' => 'reporte_maestro',
+                'titulo' => 'Reporte general de gestiones',
+                'descripcion' => 'Filtra por fecha, edificio y estado.',
+                'ruta' => route('reportes.maestro'),
+                'requiere_fechas' => true,
+            ],
         ];
 
         return view('reportes.index', compact('reportes'));
@@ -224,6 +231,57 @@ class ReporteController extends Controller
                 ];
             });
     }
+
+    private function queryReporteMaestro(Request $request)
+    {
+        $query = Gestiones::with('edificio');
+
+        if ($request->filled(['desde', 'hasta'])) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($request->desde)->startOfDay(),
+                Carbon::parse($request->hasta)->endOfDay()
+            ]);
+        }
+
+        if ($request->filled('edificio_id')) {
+            $query->where('edificio_id', $request->edificio_id);
+        }
+
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        return $query->orderBy('created_at', 'desc');
+    }
+
+    public function reporteMaestro(Request $request)
+    {
+        $edificios = Edificio::orderBy('nombre')->get();
+        $gestiones = collect();
+
+        if ($request->filled(['desde', 'hasta'])) {
+            $gestiones = $this->queryReporteMaestro($request)->get();
+        }
+
+        return view('reportes.maestro', compact(
+            'gestiones',
+            'edificios'
+        ));
+    }
+
+    public function reporteMaestroPdf(Request $request)
+{
+    $gestiones = $this->queryReporteMaestro($request)->get();
+
+    $pdf = Pdf::loadView('reportes.pdf.maestro', [
+        'gestiones' => $gestiones,
+        'request' => $request
+    ])->setPaper('A4', 'landscape');
+
+    return $pdf->download(
+        'reporte-gestiones-' . now()->format('d-m-Y') . '.pdf'
+    );
+}
 
 
 
