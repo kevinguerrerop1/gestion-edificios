@@ -29,10 +29,11 @@
         <div class="col-md-3">
             <label class="form-label">Edificio</label>
             <select name="edificio_id" class="form-select">
-                <option value="">Todos</option>
+                <option value="">-- Todos los edificios --</option>
+
                 @foreach($edificios as $e)
                     <option value="{{ $e->id }}"
-                        @selected(request('edificio_id') == $e->id)>
+                        {{ request('edificio_id') == $e->id ? 'selected' : '' }}>
                         {{ $e->nombre }}
                     </option>
                 @endforeach
