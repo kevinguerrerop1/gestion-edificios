@@ -73,7 +73,7 @@ class GestionesController extends Controller
         //enviar correo
         //Mail::to('gestionedificios@serviciosglobalesrv.cl')->send(new NuevaGestionMail($gestion));
         Mail::send('emails.nueva_gestion', ['gestion' => $gestion], function($message){
-            $message->to('gestionedificios@serviciosglobalesrv.cl')->subject('Nueva Solicitud');
+            $message->to('contacto@serviciosglobalesrv.cl')->subject('Nueva Solicitud');
         });
 
 
