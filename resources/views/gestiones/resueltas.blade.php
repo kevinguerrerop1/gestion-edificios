@@ -12,7 +12,7 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         <div class="container mt-4">
-            <table id="tabla-gestiones" class="table table-striped table-hover">
+            <table id="tabla" class="table table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
                         <th>ID</th>

@@ -6,6 +6,10 @@ use App\Http\Controllers\VisitaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EdificioController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\TecnicosController;
+use App\Http\Controllers\ArticulosController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -61,4 +65,23 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reportes/maestro/pdf',[ReporteController::class, 'reporteMaestroPdf'])->name('reportes.maestro_pdf');
 
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+
+
+
+    Route::resource('checkouts', CheckoutController::class);
+    Route::get('checkouts/create', [CheckoutController::class, 'create'])->name('checkouts.create');
+    Route::post('checkouts',[CheckoutController::class,'store'])->name('checkouts.store');
+
+    Route::prefix('tecnicos')->group(function () {
+        Route::get('/', [TecnicosController::class, 'index'])->name('tecnicos.index');
+        Route::post('/', [TecnicosController::class, 'store'])->name('tecnicos.store');
+        Route::post('/toggle/{id}', [TecnicosController::class, 'toggle'])->name('tecnicos.toggle');
+        Route::delete('/{id}', [TecnicosController::class, 'destroy'])->name('tecnicos.destroy');
+    });
+
+    Route::get('articulos', [ArticulosController::class,'index'])->name('articulos.index');
+    Route::post('articulos', [ArticulosController::class,'store'])->name('articulos.store');
+    Route::put('articulos/{id}', [ArticulosController::class,'update'])->name('articulos.update');
+    Route::delete('articulos/{id}', [ArticulosController::class,'destroy'])->name('articulos.destroy');
+    Route::post('articulos/{id}/toggle', [ArticulosController::class,'toggle'])->name('articulos.toggle');
 });

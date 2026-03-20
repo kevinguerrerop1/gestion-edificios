@@ -21,6 +21,6 @@ class Edificio extends Model
 
     public function edificio()
     {
-        return $this->belongsTo(Edificio::class, 'edificio_id');
+        return $this->belongsTo(Edificio::class);
     }
 }

@@ -110,6 +110,7 @@
                         </a>
                     </li>
 
+                    {{-- GESTIONES --}}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                             <i class="bi bi-folder2-open me-1"></i> Gestiones
@@ -121,15 +122,53 @@
                         </ul>
                     </li>
 
+                    {{-- EDIFICIOS --}}
                     <li class="nav-item">
                         <a class="nav-link" href="/edificios">
                             <i class="bi bi-building me-1"></i> Edificios
                         </a>
                     </li>
+
+                    {{-- REPORTES --}}
                     <li class="nav-item">
                         <a href="{{ route('reportes.index') }}" class="nav-link">
                             📊 Reportes
                         </a>
+                    </li>
+
+                    {{-- NUEVO DROPDOWN MANTENEDORES --}}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear me-1"></i> Ceck-Out
+                        </a>
+                        <ul class="dropdown-menu shadow-sm">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('checkouts.index') }}">
+                                    <i class="bi bi-box-seam me-2"></i> Check-Outs
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('articulos.index') }}">
+                                    <i class="bi bi-box-seam me-2"></i> Artículos
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('tecnicos.index') }}">
+                                    <i class="bi bi-person-gear me-2"></i> Técnicos
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            {{-- FUTURO --}}
+                            <li>
+                                <a class="dropdown-item text-muted" href="#">
+                                    <i class="bi bi-plus-circle me-2"></i> Próximos módulos
+                                </a>
+                            </li>
+
+                        </ul>
                     </li>
 
                 </ul>
@@ -173,7 +212,7 @@
 
 <script>
             $(document).ready(function() {
-                $('#tabla-gestiones').DataTable({
+                $('#tabla').DataTable({
                     responsive: true,
                     autoWidth: false,
 

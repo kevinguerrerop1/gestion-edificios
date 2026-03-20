@@ -58,7 +58,7 @@
                 </span>
             </div>
             <div class="card-body p-0">
-                <table id="tabla-gestiones" class="table table-striped table-hover">
+                <table id="tabla" class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
                             <th>#</th>
