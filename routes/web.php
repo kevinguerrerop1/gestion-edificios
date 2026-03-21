@@ -84,4 +84,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('articulos/{id}', [ArticulosController::class,'update'])->name('articulos.update');
     Route::delete('articulos/{id}', [ArticulosController::class,'destroy'])->name('articulos.destroy');
     Route::post('articulos/{id}/toggle', [ArticulosController::class,'toggle'])->name('articulos.toggle');
+
+    Route::get('/test-path', function () {
+    dd(public_path('checkouts'));
 });
+
+    });

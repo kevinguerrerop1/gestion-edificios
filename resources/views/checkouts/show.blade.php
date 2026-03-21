@@ -92,19 +92,15 @@
     <div class="card-body">
 
         @if($checkout->pdf_solicitud)
-            <a href="{{ asset('storage/'.$checkout->pdf_solicitud) }}" target="_blank" class="btn btn-outline-primary me-2">
+            <a href="{{ asset('checkout/'.$checkout->pdf_solicitud) }}" target="_blank" class="btn btn-outline-primary me-2">
                 📄 Ver Solicitud
             </a>
         @endif
 
         @if($checkout->pdf_entrega)
-            <a href="{{ asset('storage/'.$checkout->pdf_entrega) }}" target="_blank" class="btn btn-outline-success">
+            <a href="{{ asset('checkout/'.$checkout->pdf_entrega) }}" target="_blank" class="btn btn-outline-success">
                 📄 Ver Entrega
             </a>
-        @endif
-
-        @if(!$checkout->pdf_solicitud && !$checkout->pdf_entrega)
-            <p class="text-muted mb-0">No hay documentos adjuntos</p>
         @endif
 
     </div>

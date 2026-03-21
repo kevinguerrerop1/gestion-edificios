@@ -6,7 +6,7 @@
 <h3>🛒 Nuevo Checkout</h3>
 
 <form method="POST" action="{{ route('checkouts.store') }}" enctype="multipart/form-data">
-@csrf
+    @csrf
 
 <select name="edificio_id" class="form-select mb-2">
 @foreach($edificios as $e)

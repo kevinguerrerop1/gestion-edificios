@@ -55,6 +55,12 @@ return [
             'visibility' => 'public',
         ],
 
+        'public_direct' => [
+            'driver' => 'local',
+            'root'   => public_path('checkout'),
+            'url'    => env('APP_URL') . '/checkout',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
