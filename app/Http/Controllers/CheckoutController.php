@@ -72,7 +72,8 @@ class CheckoutController extends Controller
 
         $checkout->save();
         //dd($checkout->pdf_solicitud, $checkout->pdf_entrega);
-        return back()->with('success', 'Checkout guardado correctamente');
+        return redirect()->route('checkouts.index')
+            ->with('success', 'Check-Out #' . $checkout->id . ' guardado correctamente.');
     }
 
     public function show($id)

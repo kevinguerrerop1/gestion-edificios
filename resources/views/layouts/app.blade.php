@@ -104,21 +104,39 @@
                 @auth
                 <ul class="navbar-nav me-auto mt-3 mt-lg-0">
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/gestiones">
-                            <i class="bi bi-house-door me-1"></i> Inicio
-                        </a>
-                    </li>
-
-                    {{-- GESTIONES --}}
+                    {{-- CHECK-OUT --}}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-folder2-open me-1"></i> Gestiones
+                            <i class="bi bi-box-seam me-1"></i> Check-Out
                         </a>
                         <ul class="dropdown-menu shadow-sm">
-                            <li><a class="dropdown-item" href="/gestiones">Todas</a></li>
-                            <li><a class="dropdown-item" href="/gestiones/pendientes">En proceso</a></li>
-                            <li><a class="dropdown-item" href="/gestiones/resueltas">Finalizadas</a></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('checkouts.index') }}">
+                                    <i class="bi bi-clipboard-check me-2"></i> Check-Outs
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('articulos.index') }}">
+                                    <i class="bi bi-tags me-2"></i> Artículos
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('tecnicos.index') }}">
+                                    <i class="bi bi-person-gear me-2"></i> Técnicos
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {{-- GESTIÓN --}}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-folder2-open me-1"></i> Gestión
+                        </a>
+                        <ul class="dropdown-menu shadow-sm">
+                            <li><a class="dropdown-item" href="/gestiones"><i class="bi bi-list-ul me-2"></i> Todas</a></li>
+                            <li><a class="dropdown-item" href="/gestiones/pendientes"><i class="bi bi-hourglass-split me-2"></i> En proceso</a></li>
+                            <li><a class="dropdown-item" href="/gestiones/resueltas"><i class="bi bi-check2-circle me-2"></i> Finalizadas</a></li>
                         </ul>
                     </li>
 
@@ -132,43 +150,8 @@
                     {{-- REPORTES --}}
                     <li class="nav-item">
                         <a href="{{ route('reportes.index') }}" class="nav-link">
-                            📊 Reportes
+                            <i class="bi bi-bar-chart-line me-1"></i> Reportes
                         </a>
-                    </li>
-
-                    {{-- NUEVO DROPDOWN MANTENEDORES --}}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-gear me-1"></i> Ceck-Out
-                        </a>
-                        <ul class="dropdown-menu shadow-sm">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('checkouts.index') }}">
-                                    <i class="bi bi-box-seam me-2"></i> Check-Outs
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('articulos.index') }}">
-                                    <i class="bi bi-box-seam me-2"></i> Artículos
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item" href="{{ route('tecnicos.index') }}">
-                                    <i class="bi bi-person-gear me-2"></i> Técnicos
-                                </a>
-                            </li>
-
-                            <li><hr class="dropdown-divider"></li>
-
-                            {{-- FUTURO --}}
-                            <li>
-                                <a class="dropdown-item text-muted" href="#">
-                                    <i class="bi bi-plus-circle me-2"></i> Próximos módulos
-                                </a>
-                            </li>
-
-                        </ul>
                     </li>
 
                 </ul>
