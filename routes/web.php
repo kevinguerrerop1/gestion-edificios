@@ -71,6 +71,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('checkouts', CheckoutController::class);
     Route::get('checkouts/create', [CheckoutController::class, 'create'])->name('checkouts.create');
     Route::post('checkouts',[CheckoutController::class,'store'])->name('checkouts.store');
+    Route::post('checkouts/{id}/articulos', [CheckoutController::class, 'agregarArticulos'])
+    ->name('checkouts.agregarArticulos');
 
     Route::prefix('tecnicos')->group(function () {
         Route::get('/', [TecnicosController::class, 'index'])->name('tecnicos.index');

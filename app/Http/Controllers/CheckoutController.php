@@ -84,7 +84,10 @@ class CheckoutController extends Controller
             'detalles.articulo'
         ])->findOrFail($id);
 
-        return view('checkouts.show', compact('checkout'));
+        $tecnicos = Tecnicos::where('activo', 1)->get();
+        $articulos = Articulos::where('activo', 1)->get();
+
+        return view('checkouts.show', compact('checkout', 'tecnicos', 'articulos'));
     }
 
     /**
@@ -105,9 +108,14 @@ class CheckoutController extends Controller
      * @param  \App\Models\Checkout  $checkout
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Checkout $checkout)
+    public function update(Request $request, $id)
     {
-        //
+        $checkout = Checkout::findOrFail($id);
+
+        $checkout->tecnico_id = $request->tecnico_id;
+        $checkout->save();
+
+        return back()->with('success', 'Técnico actualizado correctamente.');
     }
 
     /**
@@ -119,5 +127,30 @@ class CheckoutController extends Controller
     public function destroy(Checkout $checkout)
     {
         //
+    }
+
+    public function agregarArticulos(Request $request, $id)
+    {
+        $checkout = Checkout::findOrFail($id);
+
+        if ($request->has('articulos')) {
+            foreach ($request->articulos as $a) {
+                // Si ya existe el artículo, suma la cantidad
+                $detalle = $checkout->detalles()->where('articulo_id', $a['id'])->first();
+
+                if ($detalle) {
+                    $detalle->cantidad += $a['cantidad'];
+                    $detalle->save();
+                } else {
+                    Checkout_detalles::create([
+                        'checkout_id' => $checkout->id,
+                        'articulo_id' => $a['id'],
+                        'cantidad'    => $a['cantidad']
+                    ]);
+                }
+            }
+        }
+
+        return back()->with('success', 'Artículos agregados correctamente.');
     }
 }
