@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tecnicos extends Model
 {
-    protected $fillable = ['nombre','email','activo'];
+    protected $fillable = [
+        'nombre',
+        'email',
+        'rut',
+        'telefono',
+        'activo'
+    ];
 }

@@ -15,12 +15,20 @@
 <form method="POST" action="{{ route('tecnicos.store') }}" class="row g-2 mb-3">
 @csrf
 
-<div class="col-md-4">
+<div class="col-md-3">
     <input name="nombre" class="form-control" placeholder="Nombre del técnico" required>
 </div>
 
-<div class="col-md-4">
+<div class="col-md-3">
     <input name="email" class="form-control" placeholder="Email (opcional)">
+</div>
+
+<div class="col-md-2">
+    <input name="rut" class="form-control" placeholder="RUT" required>
+</div>
+
+<div class="col-md-2">
+    <input name="telefono" class="form-control" placeholder="Teléfono">
 </div>
 
 <div class="col-md-2">
@@ -38,18 +46,24 @@
 <tr>
 <th>Nombre</th>
 <th>Email</th>
+<th>RUT</th>
+<th>Teléfono</th>
 <th>Estado</th>
 <th style="width: 250px;">Acciones</th>
 </tr>
 </thead>
 
-<tbody id="tabla">
+<tbody>
 @foreach($tecnicos as $t)
 <tr class="fila">
 
 <td>{{ $t->nombre }}</td>
 
 <td>{{ $t->email ?? '-' }}</td>
+
+<td>{{ $t->rut }}</td>
+
+<td>{{ $t->telefono ?? '-' }}</td>
 
 <td>
 @if($t->activo)
@@ -67,7 +81,7 @@
 <button class="btn btn-warning btn-sm">🔄</button>
 </form>
 
-{{-- OPCIONAL: ELIMINAR --}}
+{{-- ELIMINAR --}}
 <form method="POST" action="{{ route('tecnicos.destroy',$t->id) }}"
       onsubmit="return confirm('¿Eliminar técnico?')">
 @csrf

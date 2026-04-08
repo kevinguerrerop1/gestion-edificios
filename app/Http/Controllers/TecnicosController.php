@@ -17,14 +17,18 @@ class TecnicosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'email'  => 'nullable|email|max:255'
+            'nombre'   => 'required|string|max:255',
+            'email'    => 'nullable|email|max:255',
+            'rut'      => 'required|string|max:12|unique:tecnicos,rut',
+            'telefono' => 'nullable|string|max:20'
         ]);
 
         Tecnicos::create([
-            'nombre' => $request->nombre,
-            'email'  => $request->email,
-            'activo' => true
+            'nombre'   => $request->nombre,
+            'email'    => $request->email,
+            'rut'      => $request->rut,
+            'telefono' => $request->telefono,
+            'activo'   => true
         ]);
 
         return back()->with('success', 'Técnico creado correctamente');
