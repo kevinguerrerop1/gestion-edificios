@@ -11,9 +11,12 @@
 
             <label>Estado</label>
             <select name="estado" class="form-control">
-                <option value="pendiente"  {{ old('estado', $gestione->estado) == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
-                <option value="en_proceso" {{ old('estado', $gestione->estado) == 'en_proceso' ? 'selected' : '' }}>En proceso</option>
-                <option value="resuelto"   {{ old('estado', $gestione->estado) == 'resuelto' ? 'selected' : '' }}>Resuelto</option>
+                <option value="pendiente" {{ old('estado', $gestione->estado) == 'pendiente' ? 'selected' : '' }}>Pendiente
+                </option>
+                <option value="en_proceso" {{ old('estado', $gestione->estado) == 'en_proceso' ? 'selected' : '' }}>En
+                    proceso</option>
+                <option value="resuelto" {{ old('estado', $gestione->estado) == 'resuelto' ? 'selected' : '' }}>Resuelto
+                </option>
             </select>
             <button class="btn btn-primary mt-3">Actualizar</button>
         </form>

@@ -22,7 +22,7 @@ class PagoGestionMail extends Mailable
 
     public function build()
     {
-    return $this->subject('Informacion de pago - Solicitud de mantencion')
+        return $this->subject('Informacion de pago - Solicitud de mantencion')
             ->view('emails.pago_gestion');
     }
 }

@@ -8,7 +8,7 @@
                 Nueva Solicitud
             </a>
         </h2>
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         <div class="container mt-4">
@@ -42,10 +42,11 @@
                             <td>{{ $g->nombre_contacto }}</td>
                             <td>{{ $g->telefono_contacto }}</td>
                             <td>{{ $g->email_contacto }}</td>
-                            <td>{{\Carbon\Carbon::parse($g->created_at)->format('d-m-Y H:i:s')}}</td>
+                            <td>{{ \Carbon\Carbon::parse($g->created_at)->format('d-m-Y H:i:s') }}</td>
                             <td>
-                                <span class="badge
-                                    @if($g->estado == 'pendiente') bg-warning text-dark
+                                <span
+                                    class="badge
+                                    @if ($g->estado == 'pendiente') bg-warning text-dark
                                     @elseif($g->estado == 'en_proceso') bg-info text-dark
                                     @elseif($g->estado == 'realizada') bg-success
                                     @elseif ($g->estado == 'pagado') bg-success
@@ -55,19 +56,15 @@
                             </td>
                             <td>
                                 {{-- BOTÓN AGENDAR VISITA (solo si está PAGADO) --}}
-                                @if($g->estado === 'pagado')
-                                    <button class="btn btn-primary btn-sm"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalAgendarVisita"
-                                            data-gestion-id="{{ $g->id }}">
+                                @if ($g->estado === 'pagado')
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#modalAgendarVisita" data-gestion-id="{{ $g->id }}">
                                         📅 Agendar
                                     </button>
                                 @endif
                                 {{-- BOTÓN CONFIRMAR PAGO (solo si está PENDIENTE) --}}
-                                @if($g->estado === 'pendiente')
-                                    <form action="{{ route('gestiones.pagar', $g->id) }}"
-                                        method="POST"
-                                        class="d-inline"
+                                @if ($g->estado === 'pendiente')
+                                    <form action="{{ route('gestiones.pagar', $g->id) }}" method="POST" class="d-inline"
                                         onsubmit="return confirm('¿Confirmar que el pago fue corroborado?')">
                                         @csrf
                                         <button type="submit" class="btn btn-success btn-sm">
@@ -75,19 +72,18 @@
                                         </button>
                                     </form>
                                 @endif
-                                {{-- BOTÓN FINALIZAR GESTION (solo si esta en proceso)--}}
+                                {{-- BOTÓN FINALIZAR GESTION (solo si esta en proceso) --}}
 
-                                @if($g->estado === 'en_proceso')
-                                    <button class="btn btn-danger btn-sm"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalFinalizarServicio"
-                                            data-gestion-id="{{ $g->id }}">
+                                @if ($g->estado === 'en_proceso')
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#modalFinalizarServicio" data-gestion-id="{{ $g->id }}">
                                         🔒 Finalizar
                                     </button>
                                 @endif
 
 
-                                <a href="{{ route('visitas.historial', $g->id) }}" class="btn btn-warning btn-sm">Historial</a>
+                                <a href="{{ route('visitas.historial', $g->id) }}"
+                                    class="btn btn-warning btn-sm">Historial</a>
                             </td>
                         </tr>
                     @endforeach
@@ -100,9 +96,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
 
-                <form id="formAgendarVisita"
-                    action="{{ route('visitas.store', 0) }}"
-                    method="POST">
+                <form id="formAgendarVisita" action="{{ route('visitas.store', 0) }}" method="POST">
                     @csrf
 
                     <div class="modal-header" style="background:#1f4e78;">
@@ -118,11 +112,8 @@
 
                         <div class="mb-3">
                             <label class="form-label">Fecha</label>
-                            <input type="date"
-                                name="fecha_visita"
-                                class="form-control"
-                                min="{{ now()->addDay()->format('Y-m-d') }}"
-                                required>
+                            <input type="date" name="fecha_visita" class="form-control"
+                                min="{{ now()->addDay()->format('Y-m-d') }}" required>
                         </div>
 
                         <div class="mb-3">
@@ -162,18 +153,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
 
-                <form id="formFinalizarServicio"
-                    method="POST"
-                    action="{{ route('gestiones.finalizar', 0) }}">
+                <form id="formFinalizarServicio" method="POST" action="{{ route('gestiones.finalizar', 0) }}">
                     @csrf
 
                     <div class="modal-header" style="background:#dc3545;">
                         <h5 class="modal-title text-white">
                             🔒 Finalizar servicio
                         </h5>
-                        <button type="button"
-                                class="btn-close btn-close-white"
-                                data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
 
                     <div class="modal-body">
@@ -183,21 +170,15 @@
 
                         <div class="mb-3">
                             <label class="form-label">Comentario de cierre</label>
-                            <textarea name="comentario"
-                                    class="form-control"
-                                    rows="4"
-                                    required></textarea>
+                            <textarea name="comentario" class="form-control" rows="4" required></textarea>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-outline-secondary"
-                                data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Cancelar
                         </button>
-                        <button type="submit"
-                                class="btn btn-danger">
+                        <button type="submit" class="btn btn-danger">
                             🔒 Finalizar servicio
                         </button>
                     </div>
@@ -208,39 +189,38 @@
         </div>
     </div>
 
-<script>
-    //Modal para agendar
-    document.addEventListener('DOMContentLoaded', function () {
+    <script>
+        //Modal para agendar
+        document.addEventListener('DOMContentLoaded', function() {
 
-        const modal = document.getElementById('modalAgendarVisita');
-        const form  = document.getElementById('formAgendarVisita');
+            const modal = document.getElementById('modalAgendarVisita');
+            const form = document.getElementById('formAgendarVisita');
 
-        modal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const gestionId = button.getAttribute('data-gestion-id');
+            modal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const gestionId = button.getAttribute('data-gestion-id');
 
-            // Reemplaza el 0 por el ID real
-            form.action = form.action.replace('/0', '/' + gestionId);
+                // Reemplaza el 0 por el ID real
+                form.action = form.action.replace('/0', '/' + gestionId);
+            });
+
         });
 
-    });
+        //Modal para finalizar
+        document.addEventListener('DOMContentLoaded', function() {
 
-    //Modal para finalizar
-    document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('modalFinalizarServicio');
+            const form = document.getElementById('formFinalizarServicio');
 
-        const modal = document.getElementById('modalFinalizarServicio');
-        const form  = document.getElementById('formFinalizarServicio');
+            if (!modal || !form) return;
 
-        if (!modal || !form) return;
+            modal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const gestionId = button.getAttribute('data-gestion-id');
 
-        modal.addEventListener('show.bs.modal', function (event) {
-            const button   = event.relatedTarget;
-            const gestionId = button.getAttribute('data-gestion-id');
+                form.action = form.action.replace('/0', '/' + gestionId);
+            });
 
-            form.action = form.action.replace('/0', '/' + gestionId);
         });
-
-    });
-
-</script>
+    </script>
 @endsection

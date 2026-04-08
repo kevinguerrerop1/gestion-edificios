@@ -25,7 +25,7 @@ class CheckoutController extends Controller
         return view('checkouts.create', [
             'edificios' => Edificio::all(),
             'articulos' => Articulos::all(),
-            'tecnicos'  => Tecnicos::where('activo',1)->get()
+            'tecnicos'  => Tecnicos::where('activo', 1)->get()
         ]);
     }
 

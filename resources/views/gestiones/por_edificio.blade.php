@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+    <div class="container">
 
-<a href="{{ route('edificios.index') }}" class="btn btn-secondary mb-3">
-    ⬅ Volver
-</a>
+        <a href="{{ route('edificios.index') }}" class="btn btn-secondary mb-3">
+            ⬅ Volver
+        </a>
 
-    @include('gestiones.partials.listado', [
-        'edificio' => $edificio,
-        'gestiones' => $gestiones
-    ])
+        @include('gestiones.partials.listado', [
+            'edificio' => $edificio,
+            'gestiones' => $gestiones,
+        ])
 
-</div>
+    </div>
 @endsection

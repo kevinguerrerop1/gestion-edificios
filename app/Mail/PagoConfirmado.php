@@ -24,9 +24,9 @@ class PagoConfirmado extends Mailable
      *
      * @return $this
      */
-     public function build()
+    public function build()
     {
         return $this->subject('Pago confirmado')
-                    ->view('emails.pago_confirmado');
+            ->view('emails.pago_confirmado');
     }
 }

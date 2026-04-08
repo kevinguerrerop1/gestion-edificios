@@ -15,7 +15,7 @@
                             @csrf
                             <select name="edificio_id" class="form-select" required>
                                 <option value="">Seleccione edificio</option>
-                                @foreach($edificios as $edificio)
+                                @foreach ($edificios as $edificio)
                                     <option value="{{ $edificio->id }}">
                                         {{ $edificio->nombre }} - {{ $edificio->direccion }}
                                     </option>
@@ -23,29 +23,35 @@
                             </select>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">🏢 Departamento</label>
-                                <input type="text" name="departamento" class="form-control" placeholder="Ej: 502B" required>
+                                <input type="text" name="departamento" class="form-control" placeholder="Ej: 502B"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">📌 Título del problema</label>
-                                <input type="text" name="titulo" class="form-control" placeholder="Ej: Fuga de agua en el baño" required>
+                                <input type="text" name="titulo" class="form-control"
+                                    placeholder="Ej: Fuga de agua en el baño" required>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">👤 Nombre de contacto</label>
-                                    <input type="text" name="nombre_contacto" class="form-control" placeholder="Nombre completo" required>
+                                    <input type="text" name="nombre_contacto" class="form-control"
+                                        placeholder="Nombre completo" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">📱 Teléfono</label>
-                                    <input type="text" name="telefono_contacto" id="telefono_contacto" class="form-control" value="+569" maxlength="12" required>
+                                    <input type="text" name="telefono_contacto" id="telefono_contacto"
+                                        class="form-control" value="+569" maxlength="12" required>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">📩 Correo electrónico</label>
-                                <input type="email" name="email_contacto" class="form-control" placeholder="correo@ejemplo.com" required>
+                                <input type="email" name="email_contacto" class="form-control"
+                                    placeholder="correo@ejemplo.com" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">📝 Descripción del problema</label>
-                                <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe el problema con detalle..." required></textarea>
+                                <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe el problema con detalle..."
+                                    required></textarea>
                             </div>
                             <div class="text-center">
                                 <button class="btn btn-success btn-lg px-5">
@@ -63,7 +69,7 @@
     </div>
 
     <script>
-        document.getElementById('telefono_contacto').addEventListener('input', function () {
+        document.getElementById('telefono_contacto').addEventListener('input', function() {
             if (!this.value.startsWith('+569')) {
                 this.value = '+569';
             }

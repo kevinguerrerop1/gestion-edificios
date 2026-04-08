@@ -11,7 +11,7 @@ class VisitaConfirmada extends Mailable
 {
     use Queueable, SerializesModels;
 
-     public $gestion;
+    public $gestion;
     public $fecha;
     public $hora;
 

@@ -18,12 +18,8 @@
                             <div class="mb-3">
                                 <label class="form-label small text-muted">Nombre</label>
                                 <input type="text"
-                                        class="form-control form-control-lg @error('name') is-invalid @enderror"
-                                        name="name"
-                                        value="{{ old('name') }}"
-                                        placeholder="Nombre completo"
-                                        required
-                                        autofocus>
+                                    class="form-control form-control-lg @error('name') is-invalid @enderror" name="name"
+                                    value="{{ old('name') }}" placeholder="Nombre completo" required autofocus>
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -33,11 +29,8 @@
                             <div class="mb-3">
                                 <label class="form-label small text-muted">Correo electrónico</label>
                                 <input type="email"
-                                        class="form-control form-control-lg @error('email') is-invalid @enderror"
-                                        name="email"
-                                        value="{{ old('email') }}"
-                                        placeholder="usuario@empresa.cl"
-                                        required>
+                                    class="form-control form-control-lg @error('email') is-invalid @enderror" name="email"
+                                    value="{{ old('email') }}" placeholder="usuario@empresa.cl" required>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -47,10 +40,8 @@
                             <div class="mb-3">
                                 <label class="form-label small text-muted">Contraseña</label>
                                 <input type="password"
-                                        class="form-control form-control-lg @error('password') is-invalid @enderror"
-                                        name="password"
-                                        placeholder="••••••••"
-                                        required>
+                                    class="form-control form-control-lg @error('password') is-invalid @enderror"
+                                    name="password" placeholder="••••••••" required>
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -59,11 +50,8 @@
                             {{-- Confirmar Password --}}
                             <div class="mb-4">
                                 <label class="form-label small text-muted">Confirmar contraseña</label>
-                                <input type="password"
-                                        class="form-control form-control-lg"
-                                        name="password_confirmation"
-                                        placeholder="••••••••"
-                                        required>
+                                <input type="password" class="form-control form-control-lg" name="password_confirmation"
+                                    placeholder="••••••••" required>
                             </div>
 
                             {{-- Botón --}}

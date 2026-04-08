@@ -50,7 +50,7 @@ class VisitaController extends Controller
                 new VisitaConfirmada($gestion, $request->fecha_visita, $request->hora_visita)
             );
         }*/
-            // Envío de correo
+        // Envío de correo
         if (!empty($gestion->email_contacto)) {
             Mail::to($gestion->email_contacto)->send(
                 new VisitaConfirmada(

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GestionesController;
 use App\Http\Controllers\VisitaController;
 use App\Http\Controllers\HomeController;
@@ -40,29 +41,29 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gestiones/resueltas', [GestionesController::class, 'resueltas'])->name('gestiones.resueltas');
 
     //Funciona para finalizar gestiones
-    Route::post('/gestiones/{id}/finalizar',[GestionesController::class, 'finalizar'])->name('gestiones.finalizar');
+    Route::post('/gestiones/{id}/finalizar', [GestionesController::class, 'finalizar'])->name('gestiones.finalizar');
     Route::resource('gestiones', GestionesController::class);
     /*Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');*/
     Route::get('/gestiones/{id}/visitas/crear', [VisitaController::class, 'create'])->name('visitas.create');
     Route::post('/gestiones/{id}/visitas', [VisitaController::class, 'store'])->name('visitas.store');
     Route::get('/gestiones/{id}/visitas/historial', [VisitaController::class, 'historial'])->name('visitas.historial');
     Route::get('gestiones/edificio/{id}', [GestionesController::class, 'porEdificio'])->name('gestiones.por_edificio');
-    Route::post('/gestiones/{id}/pagar',[GestionesController::class, 'marcarPagado'])->name('gestiones.pagar');
+    Route::post('/gestiones/{id}/pagar', [GestionesController::class, 'marcarPagado'])->name('gestiones.pagar');
 
     Route::resource('edificios', EdificioController::class);
 
     //Rutas de reportes
-    Route::get('/reportes/solicitudes-sin-visita',[ReporteController::class, 'solicitudesSinVisita'])->name('reportes.solicitudes_sin_visita');
-    Route::get('/reportes/gestiones-finalizadas',[ReporteController::class, 'gestionesFinalizadasPorEdificio'])->name('reportes.gestiones_finalizadas');
-    Route::get('/reportes/gestiones-finalizadas/pdf',[ReporteController::class, 'gestionesFinalizadasPorEdificioPdf'])->name('reportes.gestiones_finalizadas.pdf');
+    Route::get('/reportes/solicitudes-sin-visita', [ReporteController::class, 'solicitudesSinVisita'])->name('reportes.solicitudes_sin_visita');
+    Route::get('/reportes/gestiones-finalizadas', [ReporteController::class, 'gestionesFinalizadasPorEdificio'])->name('reportes.gestiones_finalizadas');
+    Route::get('/reportes/gestiones-finalizadas/pdf', [ReporteController::class, 'gestionesFinalizadasPorEdificioPdf'])->name('reportes.gestiones_finalizadas.pdf');
     Route::get('/reportes/sin-visita/pdf', [ReporteController::class, 'sinVisitaPdf'])->name('reportes.sin-visita.pdf');
     Route::get('/reportes/visitas-atrasadas', [ReporteController::class, 'visitasAtrasadas'])->name('reportes.visitas-atrasadas');
     Route::get('/reportes/visitas-atrasadas/pdf', [ReporteController::class, 'visitasAtrasadasPdf'])->name('reportes.visitas-atrasadas.pdf');
-    Route::get('/reportes/historial-gestion',[ReporteController::class, 'historialGestion'])->name('reportes.historial_gestion');
-    Route::get('/reportes/historial-gestion/{gestion}/pdf',[ReporteController::class, 'historialGestionPdf'])->name('reportes.historial_gestion_pdf');
-    Route::get('/reportes/buscar-gestion',[ReporteController::class, 'buscarGestion'])->name('reportes.buscar_gestion');
-    Route::get('/reportes/maestro',[ReporteController::class, 'reporteMaestro'])->name('reportes.maestro');
-    Route::get('/reportes/maestro/pdf',[ReporteController::class, 'reporteMaestroPdf'])->name('reportes.maestro_pdf');
+    Route::get('/reportes/historial-gestion', [ReporteController::class, 'historialGestion'])->name('reportes.historial_gestion');
+    Route::get('/reportes/historial-gestion/{gestion}/pdf', [ReporteController::class, 'historialGestionPdf'])->name('reportes.historial_gestion_pdf');
+    Route::get('/reportes/buscar-gestion', [ReporteController::class, 'buscarGestion'])->name('reportes.buscar_gestion');
+    Route::get('/reportes/maestro', [ReporteController::class, 'reporteMaestro'])->name('reportes.maestro');
+    Route::get('/reportes/maestro/pdf', [ReporteController::class, 'reporteMaestroPdf'])->name('reportes.maestro_pdf');
 
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
@@ -70,9 +71,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('checkouts', CheckoutController::class);
     Route::get('checkouts/create', [CheckoutController::class, 'create'])->name('checkouts.create');
-    Route::post('checkouts',[CheckoutController::class,'store'])->name('checkouts.store');
+    Route::post('checkouts', [CheckoutController::class, 'store'])->name('checkouts.store');
     Route::post('checkouts/{id}/articulos', [CheckoutController::class, 'agregarArticulos'])
-    ->name('checkouts.agregarArticulos');
+        ->name('checkouts.agregarArticulos');
 
     Route::prefix('tecnicos')->group(function () {
         Route::get('/', [TecnicosController::class, 'index'])->name('tecnicos.index');
@@ -81,14 +82,13 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [TecnicosController::class, 'destroy'])->name('tecnicos.destroy');
     });
 
-    Route::get('articulos', [ArticulosController::class,'index'])->name('articulos.index');
-    Route::post('articulos', [ArticulosController::class,'store'])->name('articulos.store');
-    Route::put('articulos/{id}', [ArticulosController::class,'update'])->name('articulos.update');
-    Route::delete('articulos/{id}', [ArticulosController::class,'destroy'])->name('articulos.destroy');
-    Route::post('articulos/{id}/toggle', [ArticulosController::class,'toggle'])->name('articulos.toggle');
+    Route::get('articulos', [ArticulosController::class, 'index'])->name('articulos.index');
+    Route::post('articulos', [ArticulosController::class, 'store'])->name('articulos.store');
+    Route::put('articulos/{id}', [ArticulosController::class, 'update'])->name('articulos.update');
+    Route::delete('articulos/{id}', [ArticulosController::class, 'destroy'])->name('articulos.destroy');
+    Route::post('articulos/{id}/toggle', [ArticulosController::class, 'toggle'])->name('articulos.toggle');
 
     Route::get('/test-path', function () {
-    dd(public_path('checkouts'));
-});
-
+        dd(public_path('checkouts'));
     });
+});

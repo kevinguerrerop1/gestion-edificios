@@ -12,6 +12,8 @@ class NuevaGestionMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $gestion;
+
     /**
      * Create a new message instance.
      *
@@ -31,6 +33,6 @@ class NuevaGestionMail extends Mailable
     {
         //return $this->view('view.name');
         return $this->subject('Nueva solicitud registrada')
-                    ->view('emails.nueva_gestion');
+            ->view('emails.nueva_gestion');
     }
 }

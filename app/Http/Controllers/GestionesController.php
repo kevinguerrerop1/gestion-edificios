@@ -27,7 +27,7 @@ class GestionesController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-            //dd($gestiones);
+        //dd($gestiones);
         return view('gestiones.pendientes', compact('gestiones'));
     }
 
@@ -37,7 +37,7 @@ class GestionesController extends Controller
             ->where('estado', 'finalizada')
             ->orderBy('created_at', 'desc')
             ->get();
-            //dd($gestiones);
+        //dd($gestiones);
         return view('gestiones.resueltas', compact('gestiones'));
     }
 
@@ -72,7 +72,7 @@ class GestionesController extends Controller
 
         //enviar correo
         //Mail::to('gestionedificios@serviciosglobalesrv.cl')->send(new NuevaGestionMail($gestion));
-        Mail::send('emails.nueva_gestion', ['gestion' => $gestion], function($message){
+        Mail::send('emails.nueva_gestion', ['gestion' => $gestion], function ($message) {
             $message->to('contacto@serviciosglobalesrv.cl')->subject('Nueva Solicitud');
         });
 
@@ -126,7 +126,7 @@ class GestionesController extends Controller
             ['gestion' => $gestion],
             function ($message) {
                 $message->to('gestionedificios@serviciosglobalesrv.cl')
-                        ->subject('Nueva Solicitud de Mantención');
+                    ->subject('Nueva Solicitud de Mantención');
             }
         );
 
@@ -153,7 +153,7 @@ class GestionesController extends Controller
         $gestion->save();
 
         return redirect()->route('gestiones.index')
-            ->with('success','Visita agendada correctamente.');
+            ->with('success', 'Visita agendada correctamente.');
     }
 
     public function show(gestiones $gestiones)
@@ -174,7 +174,7 @@ class GestionesController extends Controller
         $gestione->update($request->only('estado'));
 
         return redirect()->route('gestiones.index')
-            ->with('success','Actualizado.');
+            ->with('success', 'Actualizado.');
     }
 
     public function destroy(gestiones $gestiones)
@@ -221,7 +221,6 @@ class GestionesController extends Controller
             ->get();
 
         return view('gestiones.por_edificio', compact('edificio', 'gestiones'));
-
     }
 
     public function marcarPagado(Request $request, $gestion_id)
@@ -255,5 +254,4 @@ class GestionesController extends Controller
 
         return back()->with('success', 'Pago confirmado y registrado en historial');
     }
-
 }

@@ -126,8 +126,8 @@ class ReporteController extends Controller
 
         return $pdf->download(
             'gestiones-finalizadas-' .
-            $edificio->nombre . '-' .
-            now()->format('d-m-Y') . '.pdf'
+                $edificio->nombre . '-' .
+                now()->format('d-m-Y') . '.pdf'
         );
     }
 
@@ -270,19 +270,16 @@ class ReporteController extends Controller
     }
 
     public function reporteMaestroPdf(Request $request)
-{
-    $gestiones = $this->queryReporteMaestro($request)->get();
+    {
+        $gestiones = $this->queryReporteMaestro($request)->get();
 
-    $pdf = Pdf::loadView('reportes.pdf.maestro', [
-        'gestiones' => $gestiones,
-        'request' => $request
-    ])->setPaper('A4', 'landscape');
+        $pdf = Pdf::loadView('reportes.pdf.maestro', [
+            'gestiones' => $gestiones,
+            'request' => $request
+        ])->setPaper('A4', 'landscape');
 
-    return $pdf->download(
-        'reporte-gestiones-' . now()->format('d-m-Y') . '.pdf'
-    );
-}
-
-
-
+        return $pdf->download(
+            'reporte-gestiones-' . now()->format('d-m-Y') . '.pdf'
+        );
+    }
 }

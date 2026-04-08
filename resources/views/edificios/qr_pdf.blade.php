@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
 
@@ -74,6 +75,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="card">
@@ -111,4 +113,5 @@
     </div>
 
 </body>
+
 </html>

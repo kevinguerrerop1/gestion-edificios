@@ -1,7 +1,7 @@
 <h2 style="color:#1f4e78;">🛠 Nueva Solicitud de Mantención</h2>
 
 <p>
-Se ha registrado una nueva solicitud en el sistema con el siguiente detalle:
+    Se ha registrado una nueva solicitud en el sistema con el siguiente detalle:
 </p>
 
 <hr>
@@ -51,14 +51,14 @@ Se ha registrado una nueva solicitud en el sistema con el siguiente detalle:
 <h3>🆔 Identificación de la gestión</h3>
 
 <p>
-<strong>N° Gestión:</strong> #{{ $gestion->id }}<br>
-<strong>Fecha de creación:</strong> {{ $gestion->created_at->format('d-m-Y H:i') }}
+    <strong>N° Gestión:</strong> #{{ $gestion->id }}<br>
+    <strong>Fecha de creación:</strong> {{ $gestion->created_at->format('d-m-Y H:i') }}
 </p>
 
 <hr>
 
 <p style="font-size:12px; color:#777;">
-Este es un correo automático generado por el
-<strong>Sistema de Mantenciones del Edificio</strong>.<br>
-Por favor no responder a este mensaje.
+    Este es un correo automático generado por el
+    <strong>Sistema de Mantenciones del Edificio</strong>.<br>
+    Por favor no responder a este mensaje.
 </p>

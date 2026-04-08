@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <style>
@@ -45,6 +46,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Gestiones Finalizadas</h1>
     <div class="sub">
@@ -65,7 +67,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($gestiones as $g)
+            @foreach ($gestiones as $g)
                 <tr>
                     <td>{{ $g->id }}</td>
                     <td>{{ $g->departamento }}</td>
@@ -80,4 +82,5 @@
         Servicios Globales RV
     </div>
 </body>
+
 </html>

@@ -93,17 +93,17 @@ class EdificioController extends Controller
     }
 
     public function qr($id)
-{
-    $edificio = Edificio::findOrFail($id);
+    {
+        $edificio = Edificio::findOrFail($id);
 
-    $url = route('gestiones.nueva', $edificio->id);
+        $url = route('gestiones.nueva', $edificio->id);
 
-    $qrSvg = QrCode::format('svg')
-        ->size(300)
-        ->generate($url);
+        $qrSvg = QrCode::format('svg')
+            ->size(300)
+            ->generate($url);
 
-    return view('edificios.qr', compact('edificio', 'url', 'qrSvg'));
-}
+        return view('edificios.qr', compact('edificio', 'url', 'qrSvg'));
+    }
 
     public function imprimirQR($id)
     {
@@ -112,10 +112,10 @@ class EdificioController extends Controller
         $url = route('gestiones.nueva', $edificio->id);
 
         QrCode::format('svg')
-    ->size(300)
-    ->errorCorrection('H')
-    ->encoding('UTF-8')
-    ->generate($url);
+            ->size(300)
+            ->errorCorrection('H')
+            ->encoding('UTF-8')
+            ->generate($url);
 
         $pdf = Pdf::loadView('edificios.qr', compact('edificio', 'qr'));
 
@@ -132,15 +132,14 @@ class EdificioController extends Controller
         // Generar QR en base64 (evita problemas con imagick)
         $qr = base64_encode(
             QrCode::format('svg')
-    ->size(300)
-    ->errorCorrection('H')
-    ->encoding('UTF-8')
-    ->generate($url)
+                ->size(300)
+                ->errorCorrection('H')
+                ->encoding('UTF-8')
+                ->generate($url)
         );
 
         $pdf = Pdf::loadView('edificios.qr_pdf', compact('edificio', 'qr'));
 
-        return $pdf->download('QR_edificio_'.$edificio->id.'.pdf');
-}
-
+        return $pdf->download('QR_edificio_' . $edificio->id . '.pdf');
+    }
 }
