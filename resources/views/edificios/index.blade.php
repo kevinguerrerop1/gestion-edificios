@@ -52,14 +52,14 @@
 
                             <td class="text-end">
                                 <!--a href="{{ route('edificios.show', $edificio->id) }}"
-                                        class="btn btn-sm btn-outline-primary">
-                                        Ver
-                                    </a-->
+                                            class="btn btn-sm btn-outline-primary">
+                                            Ver
+                                        </a-->
 
-                                <!--a href="{{ route('edificios.edit', $edificio->id) }}"
-                                        class="btn btn-sm btn-outline-warning">
-                                        Editar
-                                    </a-->
+                                <a href="{{ route('edificios.edit', $edificio->id) }}"
+                                    class="btn btn-sm btn-outline-warning">
+                                    Editar
+                                </a>
 
                                 <a href="{{ route('gestiones.nueva', $edificio->id) }}"
                                     class="btn btn-sm btn-outline-success">
