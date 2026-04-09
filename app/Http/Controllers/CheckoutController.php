@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Edificio;
 use App\Models\Articulos;
 use App\Models\Tecnicos;
+use App\Models\CheckoutObservacion;
 use App\Models\Checkout_detalles;
 
 class CheckoutController extends Controller
@@ -25,7 +26,7 @@ class CheckoutController extends Controller
         return view('checkouts.create', [
             'edificios' => Edificio::all(),
             'articulos' => Articulos::all(),
-            'tecnicos'  => Tecnicos::where('activo', 1)->get()
+            'tecnicos' => Tecnicos::where('activo', 1)->get(),
         ]);
     }
 
@@ -36,7 +37,7 @@ class CheckoutController extends Controller
         $request->validate([
             'edificio_id' => 'required',
             'tecnico_id' => 'required',
-            'bloque' => 'required'
+            'bloque' => 'required',
         ]);
 
         // 🔹 Crear checkout
@@ -46,6 +47,7 @@ class CheckoutController extends Controller
             'bloque' => $request->bloque,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_termino' => $request->fecha_termino,
+            'estado' => 'pendiente',
         ]);
 
         // 🔥 Guardar artículos (DETALLES)
@@ -54,35 +56,30 @@ class CheckoutController extends Controller
                 Checkout_detalles::create([
                     'checkout_id' => $checkout->id,
                     'articulo_id' => $a['id'],
-                    'cantidad' => $a['cantidad']
+                    'cantidad' => $a['cantidad'],
                 ]);
             }
         }
 
         // 📄 PDFs
         if ($request->hasFile('pdf_solicitud')) {
-            $checkout->pdf_solicitud = $request->file('pdf_solicitud')
-                ->store('', 'public_direct');
+            $checkout->pdf_solicitud = $request->file('pdf_solicitud')->store('', 'public_direct');
         }
 
         if ($request->hasFile('pdf_entrega')) {
-            $checkout->pdf_entrega = $request->file('pdf_entrega')
-                ->store('', 'public_direct');
+            $checkout->pdf_entrega = $request->file('pdf_entrega')->store('', 'public_direct');
         }
 
         $checkout->save();
         //dd($checkout->pdf_solicitud, $checkout->pdf_entrega);
-        return redirect()->route('checkouts.index')
+        return redirect()
+            ->route('checkouts.index')
             ->with('success', 'Check-Out #' . $checkout->id . ' guardado correctamente.');
     }
 
     public function show($id)
     {
-        $checkout = Checkout::with([
-            'edificio',
-            'tecnico',
-            'detalles.articulo'
-        ])->findOrFail($id);
+        $checkout = Checkout::with(['edificio', 'tecnico', 'detalles.articulo'])->findOrFail($id);
 
         $tecnicos = Tecnicos::where('activo', 1)->get();
         $articulos = Articulos::where('activo', 1)->get();
@@ -145,12 +142,74 @@ class CheckoutController extends Controller
                     Checkout_detalles::create([
                         'checkout_id' => $checkout->id,
                         'articulo_id' => $a['id'],
-                        'cantidad'    => $a['cantidad']
+                        'cantidad' => $a['cantidad'],
                     ]);
                 }
             }
         }
 
         return back()->with('success', 'Artículos agregados correctamente.');
+    }
+
+    public function finalizar($id)
+    {
+        $checkout = Checkout::findOrFail($id);
+
+        $checkout->estado = 'finalizado';
+        $checkout->fecha_termino = now(); // opcional
+
+        $checkout->save();
+
+        return back()->with('success', 'Check-Out finalizado correctamente');
+    }
+
+    public function cambiarEstado(Request $request, $id)
+    {
+        $checkout = Checkout::findOrFail($id);
+
+        $actual = $checkout->estado;
+        $nuevo = $request->estado;
+
+        $permitidos = [
+            'pendiente' => ['en_revision'],
+            'en_revision' => ['con_reparos'],
+            'con_reparos' => ['finalizado'],
+            'finalizado' => [],
+        ];
+
+        if (!in_array($nuevo, $permitidos[$actual])) {
+            return back()->with('error', 'Transición no válida');
+        }
+
+        $checkout->estado = $nuevo;
+
+        if ($nuevo == 'finalizado') {
+            $checkout->fecha_termino = now();
+        }
+
+        $checkout->save();
+
+        return back()->with('success', 'Estado actualizado');
+    }
+
+    public function agregarObservacion(Request $request, $id)
+    {
+        $request->validate([
+            'observacion' => 'required|string'
+        ]);
+
+        CheckoutObservacion::create([
+            'checkout_id' => $id,
+            'observacion' => $request->observacion
+        ]);
+
+        return back()->with('success', 'Observación agregada');
+    }
+
+    public function historial($id)
+    {
+        $checkout = Checkout::with('observaciones')->findOrFail($id);
+
+        return view('checkouts.historial', compact('checkout'));
     }
 }

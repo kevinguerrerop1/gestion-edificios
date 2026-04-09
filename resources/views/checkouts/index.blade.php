@@ -29,11 +29,12 @@
                     <th>#</th>
                     <th>Edificio</th>
                     <th>Técnico</th>
-                    <th>Bloque</th>
+                    <th>Dpto. Asig</th>
                     <th>Fecha Inicio</th>
                     <th>Fecha Término</th>
                     <th class="text-center">Artículos</th>
                     <th class="text-center">PDFs</th>
+                    <th>Estado</th>
                     <th class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -62,27 +63,89 @@
                         </td>
 
                         <td class="text-center">
+
                             @if ($c->pdf_solicitud)
-                                <span class="badge bg-success">
-                                    <i class="bi bi-file-earmark-text"></i> Solicitud
-                                </span>
+                                <a href="{{ asset('checkout/' . $c->pdf_solicitud) }}" target="_blank"
+                                    class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </a>
                             @endif
+
                             @if ($c->pdf_entrega)
-                                <span class="badge bg-info text-dark">
-                                    <i class="bi bi-file-earmark-check"></i> Entrega
-                                </span>
+                                <a href="{{ asset('checkout/' . $c->pdf_entrega) }}" target="_blank"
+                                    class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-file-earmark-check"></i>
+                                </a>
                             @endif
+
                             @if (!$c->pdf_solicitud && !$c->pdf_entrega)
                                 <span class="text-muted small">
                                     <i class="bi bi-dash"></i>
                                 </span>
                             @endif
+
+                        </td>
+
+                        <td>
+                            @switch($c->estado)
+                                @case('pendiente')
+                                    <span class="badge bg-secondary">Pendiente</span>
+                                @break
+
+                                @case('en_revision')
+                                    <span class="badge bg-primary">En revisión</span>
+                                @break
+
+                                @case('con_reparos')
+                                    <span class="badge bg-warning text-dark">Con reparos</span>
+                                @break
+
+                                @case('finalizado')
+                                    <span class="badge bg-success">Finalizado</span>
+                                @break
+                            @endswitch
                         </td>
 
                         <td class="text-center">
                             <a href="{{ route('checkouts.show', $c->id) }}" class="btn btn-primary btn-sm">
                                 <i class="bi bi-eye me-1"></i> Ver
                             </a>
+                            {{-- PENDIENTE → EN REVISION --}}
+                            @if ($c->estado == 'pendiente')
+                                <form method="POST" action="{{ route('checkouts.estado', $c->id) }}">
+                                    @csrf
+                                    <input type="hidden" name="estado" value="en_revision">
+                                    <button class="btn btn-sm btn-primary">🔍 Revisar</button>
+                                </form>
+                            @endif
+
+                            {{-- EN REVISION → CON REPAROS --}}
+                            @if ($c->estado == 'en_revision')
+                                <form method="POST" action="{{ route('checkouts.estado', $c->id) }}">
+                                    @csrf
+                                    <input type="hidden" name="estado" value="con_reparos">
+                                    <button class="btn btn-sm btn-warning">⚠ Reparos</button>
+                                </form>
+                            @endif
+
+                            {{-- CON REPAROS → FINALIZADO --}}
+                            @if ($c->estado == 'con_reparos')
+                                <form method="POST" action="{{ route('checkouts.estado', $c->id) }}">
+                                    @csrf
+                                    <input type="hidden" name="estado" value="finalizado">
+                                    <button class="btn btn-sm btn-success">✔ Finalizar</button>
+                                </form>
+                            @endif
+
+                            {{-- FINALIZADO --}}
+                            @if ($c->estado == 'finalizado')
+                                <span class="text-success fw-bold">✔ Finalizado</span>
+                            @endif
+
+                            <a href="{{ route('checkouts.historial', $c->id) }}" class="btn btn-sm btn-outline-primary">
+                                💬 Historial
+                            </a>
+
                         </td>
                     </tr>
                 @endforeach

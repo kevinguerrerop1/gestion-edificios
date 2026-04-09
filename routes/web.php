@@ -74,6 +74,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('checkouts', [CheckoutController::class, 'store'])->name('checkouts.store');
     Route::post('checkouts/{id}/articulos', [CheckoutController::class, 'agregarArticulos'])
         ->name('checkouts.agregarArticulos');
+    Route::post('checkouts/{id}/finalizar', [CheckoutController::class, 'finalizar'])
+        ->name('checkouts.finalizar');
+    Route::post('checkouts/{id}/estado', [CheckoutController::class, 'cambiarEstado'])
+        ->name('checkouts.estado');
+    Route::post('checkouts/{id}/observaciones', [CheckoutController::class, 'agregarObservacion'])
+        ->name('checkouts.observaciones');
+
+    Route::get('checkouts/{id}/historial', [CheckoutController::class, 'historial'])
+        ->name('checkouts.historial');
 
     Route::prefix('tecnicos')->group(function () {
         Route::get('/', [TecnicosController::class, 'index'])->name('tecnicos.index');

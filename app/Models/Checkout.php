@@ -8,14 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Tecnicos;
 use App\Models\Edificio;
 use App\Models\Checkout_detalles;
+use App\Models\CheckoutObservacion;
 
 
 class Checkout extends Model
 {
     protected $fillable = [
-        'edificio_id','tecnico_id','bloque',
-        'fecha_inicio','fecha_termino',
-        'pdf_solicitud','pdf_entrega'
+        'edificio_id',
+        'tecnico_id',
+        'bloque',
+        'fecha_inicio',
+        'fecha_termino',
+        'pdf_solicitud',
+        'pdf_entrega'
     ];
 
     public function detalles()
@@ -31,5 +36,10 @@ class Checkout extends Model
     public function edificio()
     {
         return $this->belongsTo(Edificio::class);
+    }
+
+    public function observaciones()
+    {
+        return $this->hasMany(CheckoutObservacion::class);
     }
 }
