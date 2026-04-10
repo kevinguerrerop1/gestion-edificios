@@ -14,11 +14,25 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-        $checkouts = Checkout::with(['edificio', 'detalles'])
+        /*$checkouts = Checkout::with(['edificio', 'detalles'])
             ->latest()
             ->get();
 
+        return view('checkouts.index', compact('checkouts'));*/
+        $checkouts = Checkout::with(['edificio', 'tecnico', 'detalles'])
+            ->where('estado', '!=', 'finalizado') // 🔥 ESTA ES LA CLAVE
+            ->get();
+
         return view('checkouts.index', compact('checkouts'));
+    }
+
+    public function cerrados()
+    {
+        $checkouts = Checkout::with(['edificio', 'tecnico', 'detalles'])
+            ->where('estado', 'finalizado')
+            ->get();
+
+        return view('checkouts.cerrados', compact('checkouts'));
     }
 
     public function create()
@@ -167,23 +181,11 @@ class CheckoutController extends Controller
     {
         $checkout = Checkout::findOrFail($id);
 
-        $actual = $checkout->estado;
-        $nuevo = $request->estado;
+        // Asignar nuevo estado directamente
+        $checkout->estado = $request->estado;
 
-        $permitidos = [
-            'pendiente' => ['en_revision'],
-            'en_revision' => ['con_reparos'],
-            'con_reparos' => ['finalizado'],
-            'finalizado' => [],
-        ];
-
-        if (!in_array($nuevo, $permitidos[$actual])) {
-            return back()->with('error', 'Transición no válida');
-        }
-
-        $checkout->estado = $nuevo;
-
-        if ($nuevo == 'finalizado') {
+        // Si pasa a finalizado, guardar fecha
+        if ($request->estado == 'finalizado') {
             $checkout->fecha_termino = now();
         }
 

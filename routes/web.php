@@ -69,7 +69,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    Route::resource('checkouts', CheckoutController::class);
+
     Route::get('checkouts/create', [CheckoutController::class, 'create'])->name('checkouts.create');
     Route::post('checkouts', [CheckoutController::class, 'store'])->name('checkouts.store');
     Route::post('checkouts/{id}/articulos', [CheckoutController::class, 'agregarArticulos'])
@@ -83,6 +83,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('checkouts/{id}/historial', [CheckoutController::class, 'historial'])
         ->name('checkouts.historial');
+
+    Route::get('checkouts/cerrados', [CheckoutController::class, 'cerrados'])
+        ->name('checkouts.cerrados');
+    Route::resource('checkouts', CheckoutController::class);
 
     Route::prefix('tecnicos')->group(function () {
         Route::get('/', [TecnicosController::class, 'index'])->name('tecnicos.index');
