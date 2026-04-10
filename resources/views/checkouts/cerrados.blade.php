@@ -167,7 +167,7 @@
                                     👁 Ver
                                 </a>
 
-                                {{-- FLUJO --}}
+                                {{-- FLUJO
                                 @if ($c->estado == 'pendiente')
                                     <form method="POST" action="{{ route('checkouts.estado', $c->id) }}">
                                         @csrf
@@ -191,6 +191,7 @@
                                         <button class="btn btn-sm btn-success w-100">✔ Finalizar</button>
                                     </form>
                                 @endif
+                                --}}
                                 <a href="{{ route('checkouts.edit', $c->id) }}"
                                     class="btn btn-sm btn-outline-warning w-100">
                                     ✏️ Editar
