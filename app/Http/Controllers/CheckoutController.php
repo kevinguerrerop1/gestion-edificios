@@ -107,19 +107,18 @@ class CheckoutController extends Controller
      * @param  \App\Models\Checkout  $checkout
      * @return \Illuminate\Http\Response
      */
-    public function edit(Checkout $checkout)
+    public function edit($id)
     {
-        //
+        $checkout = Checkout::with(['detalles'])->findOrFail($id);
+
+        $tecnicos = Tecnicos::where('activo', 1)->get();
+        $edificios = Edificio::all();
+
+        return view('checkouts.edit', compact('checkout', 'tecnicos', 'edificios'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Checkout  $checkout
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+
+    /*public function update(Request $request, $id)
     {
         $checkout = Checkout::findOrFail($id);
 
@@ -127,6 +126,41 @@ class CheckoutController extends Controller
         $checkout->save();
 
         return back()->with('success', 'Técnico actualizado correctamente.');
+    }*/
+    public function update(Request $request, $id)
+    {
+        $checkout = Checkout::findOrFail($id);
+
+        $request->validate([
+            'edificio_id' => 'required',
+            'tecnico_id' => 'required',
+            'bloque' => 'required'
+        ]);
+
+        // 🔹 Actualizar datos básicos
+        $checkout->update([
+            'edificio_id' => $request->edificio_id,
+            'tecnico_id' => $request->tecnico_id,
+            'bloque' => $request->bloque,
+            'fecha_inicio' => $request->fecha_inicio,
+            'fecha_termino' => $request->fecha_termino,
+        ]);
+
+        // 🔥 PDFs (reemplazo opcional)
+        if ($request->hasFile('pdf_solicitud')) {
+            $checkout->pdf_solicitud = $request->file('pdf_solicitud')
+                ->store('', 'public_direct');
+        }
+
+        if ($request->hasFile('pdf_entrega')) {
+            $checkout->pdf_entrega = $request->file('pdf_entrega')
+                ->store('', 'public_direct');
+        }
+
+        $checkout->save();
+
+        return redirect()->route('checkouts.index')
+            ->with('success', 'Check-Out actualizado correctamente');
     }
 
     /**

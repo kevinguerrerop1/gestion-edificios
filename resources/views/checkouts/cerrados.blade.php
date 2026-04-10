@@ -21,7 +21,6 @@
             </li>
 
         </ul>
-
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="d-flex align-items-center">
                 <i class="bi bi-clipboard-check fs-3 me-2 text-primary"></i>
@@ -192,6 +191,10 @@
                                         <button class="btn btn-sm btn-success w-100">✔ Finalizar</button>
                                     </form>
                                 @endif
+                                <a href="{{ route('checkouts.edit', $c->id) }}"
+                                    class="btn btn-sm btn-outline-warning w-100">
+                                    ✏️ Editar
+                                </a>
 
                                 <a href="{{ route('checkouts.historial', $c->id) }}"
                                     class="btn btn-sm btn-outline-primary w-100">

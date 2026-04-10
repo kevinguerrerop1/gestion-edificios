@@ -191,6 +191,10 @@
                                         <button class="btn btn-sm btn-success w-100">✔ Finalizar</button>
                                     </form>
                                 @endif
+                                <a href="{{ route('checkouts.edit', $c->id) }}"
+                                    class="btn btn-sm btn-outline-warning w-100">
+                                    ✏️ Editar
+                                </a>
 
                                 <a href="{{ route('checkouts.historial', $c->id) }}"
                                     class="btn btn-sm btn-outline-primary w-100">
