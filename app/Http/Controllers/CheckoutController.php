@@ -248,4 +248,26 @@ class CheckoutController extends Controller
 
         return view('checkouts.historial', compact('checkout'));
     }
+
+    public function guardarDocumentos(Request $request, $id)
+    {
+        $checkout = Checkout::findOrFail($id);
+
+        $checkout->nro_oc = $request->nro_oc;
+        $checkout->nro_factura = $request->nro_factura;
+
+        if ($request->hasFile('pdf_oc')) {
+            $checkout->pdf_oc = $request->file('pdf_oc')
+                ->store('', 'public_direct');
+        }
+
+        if ($request->hasFile('pdf_factura')) {
+            $checkout->pdf_factura = $request->file('pdf_factura')
+                ->store('', 'public_direct');
+        }
+
+        $checkout->save();
+
+        return back()->with('success', 'Documentos guardados correctamente');
+    }
 }

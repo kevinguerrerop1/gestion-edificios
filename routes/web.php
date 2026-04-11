@@ -80,12 +80,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('checkouts.estado');
     Route::post('checkouts/{id}/observaciones', [CheckoutController::class, 'agregarObservacion'])
         ->name('checkouts.observaciones');
-
     Route::get('checkouts/{id}/historial', [CheckoutController::class, 'historial'])
         ->name('checkouts.historial');
-
     Route::get('checkouts/cerrados', [CheckoutController::class, 'cerrados'])
         ->name('checkouts.cerrados');
+    Route::post('checkouts/{id}/documentos', [CheckoutController::class, 'guardarDocumentos'])
+        ->name('checkouts.documentos');
     Route::resource('checkouts', CheckoutController::class);
 
     Route::prefix('tecnicos')->group(function () {
