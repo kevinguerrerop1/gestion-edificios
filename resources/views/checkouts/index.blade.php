@@ -53,7 +53,8 @@
                     <th>Artículos</th>
                     <th>PDF</th>
                     <th>Estado</th>
-                    <th>OC / Factura</th>
+                    <th>OC</th>
+                    <th>Factura</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -160,37 +161,41 @@
                             </form>
 
                         </td>
+                        {{-- 🔵 OC --}}
                         <td class="text-center">
 
-                            {{-- OC --}}
                             @if ($c->nro_oc)
-                                <div>
-                                    <small class="text-muted">OC:</small> {{ $c->nro_oc }}
-                                </div>
+                                <div class="fw-semibold">{{ $c->nro_oc }}</div>
                             @endif
 
                             @if ($c->pdf_oc)
                                 <a href="{{ asset('checkout/' . $c->pdf_oc) }}" target="_blank"
-                                    class="btn btn-sm btn-outline-primary mb-1">
-                                    📄 OC
+                                    class="btn btn-sm btn-outline-primary mt-1 w-100">
+                                    📄 Ver OC
                                 </a>
                             @endif
 
-                            {{-- FACTURA --}}
+                            @if (!$c->nro_oc && !$c->pdf_oc)
+                                <span class="text-muted">—</span>
+                            @endif
+
+                        </td>
+
+                        {{-- 🟢 FACTURA --}}
+                        <td class="text-center">
+
                             @if ($c->nro_factura)
-                                <div>
-                                    <small class="text-muted">F:</small> {{ $c->nro_factura }}
-                                </div>
+                                <div class="fw-semibold">{{ $c->nro_factura }}</div>
                             @endif
 
                             @if ($c->pdf_factura)
                                 <a href="{{ asset('checkout/' . $c->pdf_factura) }}" target="_blank"
-                                    class="btn btn-sm btn-outline-success">
-                                    🧾 Factura
+                                    class="btn btn-sm btn-outline-success mt-1 w-100">
+                                    🧾 Ver Factura
                                 </a>
                             @endif
 
-                            @if (!$c->nro_oc && !$c->nro_factura)
+                            @if (!$c->nro_factura && !$c->pdf_factura)
                                 <span class="text-muted">—</span>
                             @endif
 
@@ -245,91 +250,93 @@
                             </div>
                         </td>
                     </tr>
+                    <div class="modal fade" id="modalDocs{{ $c->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="card border-0 bg-light mb-3">
+                                <div class="card-body py-2">
+
+                                    <div class="d-flex justify-content-between small">
+                                        <span><strong>#{{ $c->id }}</strong></span>
+                                        <span class="text-muted">{{ $c->edificio->nombre ?? '-' }}</span>
+                                    </div>
+
+                                    <div class="small text-muted">
+                                        👨‍🔧 {{ $c->tecnico->nombre ?? '-' }} |
+                                        📍 {{ $c->bloque }} |
+                                        📅 {{ \Carbon\Carbon::parse($c->fecha_inicio)->format('d-m-Y') }}
+                                    </div>
+
+                                </div>
+                            </div>
+                            <form method="POST" action="{{ route('checkouts.documentos', $c->id) }}"
+                                enctype="multipart/form-data">
+                                @csrf
+
+                                <div class="modal-content">
+
+                                    <div class="modal-header bg-dark text-white">
+                                        <h5 class="modal-title">📄 OC / Factura</h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+
+                                        {{-- OC --}}
+                                        <div class="mb-3">
+                                            <label>N° OC</label>
+                                            <input type="text" name="nro_oc" class="form-control"
+                                                value="{{ $c->nro_oc }}">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label>PDF OC</label>
+                                            <input type="file" name="pdf_oc" class="form-control">
+
+                                            @if ($c->pdf_oc)
+                                                <a href="{{ asset('checkout/' . $c->pdf_oc) }}" target="_blank"
+                                                    class="btn btn-sm btn-outline-primary mt-2 w-100">
+                                                    Ver OC actual
+                                                </a>
+                                            @endif
+                                        </div>
+
+                                        <hr>
+
+                                        {{-- FACTURA --}}
+                                        <div class="mb-3">
+                                            <label>N° Factura</label>
+                                            <input type="text" name="nro_factura" class="form-control"
+                                                value="{{ $c->nro_factura }}">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label>PDF Factura</label>
+                                            <input type="file" name="pdf_factura" class="form-control">
+
+                                            @if ($c->pdf_factura)
+                                                <a href="{{ asset('checkout/' . $c->pdf_factura) }}" target="_blank"
+                                                    class="btn btn-sm btn-outline-success mt-2 w-100">
+                                                    Ver Factura actual
+                                                </a>
+                                            @endif
+                                        </div>
+
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="btn btn-success w-100">
+                                            💾 Guardar
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 @endforeach
             </tbody>
         </table>
-
-    </div>
-    <div class="modal fade" id="modalDocs{{ $c->id }}" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="card border-0 bg-light mb-3">
-                <div class="card-body py-2">
-
-                    <div class="d-flex justify-content-between small">
-                        <span><strong>#{{ $c->id }}</strong></span>
-                        <span class="text-muted">{{ $c->edificio->nombre ?? '-' }}</span>
-                    </div>
-
-                    <div class="small text-muted">
-                        👨‍🔧 {{ $c->tecnico->nombre ?? '-' }} |
-                        📍 {{ $c->bloque }} |
-                        📅 {{ \Carbon\Carbon::parse($c->fecha_inicio)->format('d-m-Y') }}
-                    </div>
-
-                </div>
-            </div>
-            <form method="POST" action="{{ route('checkouts.documentos', $c->id) }}" enctype="multipart/form-data">
-                @csrf
-
-                <div class="modal-content">
-
-                    <div class="modal-header bg-dark text-white">
-                        <h5 class="modal-title">📄 OC / Factura</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        {{-- OC --}}
-                        <div class="mb-3">
-                            <label>N° OC</label>
-                            <input type="text" name="nro_oc" class="form-control" value="{{ $c->nro_oc }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label>PDF OC</label>
-                            <input type="file" name="pdf_oc" class="form-control">
-
-                            @if ($c->pdf_oc)
-                                <a href="{{ asset('checkout/' . $c->pdf_oc) }}" target="_blank"
-                                    class="btn btn-sm btn-outline-primary mt-2 w-100">
-                                    Ver OC actual
-                                </a>
-                            @endif
-                        </div>
-
-                        <hr>
-
-                        {{-- FACTURA --}}
-                        <div class="mb-3">
-                            <label>N° Factura</label>
-                            <input type="text" name="nro_factura" class="form-control"
-                                value="{{ $c->nro_factura }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label>PDF Factura</label>
-                            <input type="file" name="pdf_factura" class="form-control">
-
-                            @if ($c->pdf_factura)
-                                <a href="{{ asset('checkout/' . $c->pdf_factura) }}" target="_blank"
-                                    class="btn btn-sm btn-outline-success mt-2 w-100">
-                                    Ver Factura actual
-                                </a>
-                            @endif
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button class="btn btn-success w-100">
-                            💾 Guardar
-                        </button>
-                    </div>
-
-                </div>
-            </form>
-        </div>
     </div>
 @endsection
 
