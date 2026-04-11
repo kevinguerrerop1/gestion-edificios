@@ -51,10 +51,10 @@
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Técnico</label>
-                            <select name="tecnico_id" class="form-select @error('tecnico_id') is-invalid @enderror">
-                                <option value="">— Seleccione un técnico —</option>
+                            <select name="tecnico_id" class="form-select">
                                 @foreach ($tecnicos as $t)
-                                    <option value="{{ $t->id }}" {{ old('tecnico_id') == $t->id ? 'selected' : '' }}>
+                                    <option value="{{ $t->id }}"
+                                        {{ old('tecnico_id', 1) == $t->id ? 'selected' : '' }}>
                                         {{ $t->nombre }}
                                     </option>
                                 @endforeach
