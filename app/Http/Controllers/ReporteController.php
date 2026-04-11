@@ -6,6 +6,7 @@ use App\Models\Reporte;
 use App\Models\gestiones;
 use App\Models\Edificio;
 use App\Models\Visita;
+use App\Models\Checkout;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class ReporteController extends Controller
      */
     public function index()
     {
-        $reportes = [
+        $reportesTermos = [
             [
                 'id' => 'sin_visita',
                 'titulo' => 'Solicitudes sin visita agendada',
@@ -57,7 +58,22 @@ class ReporteController extends Controller
             ],
         ];
 
-        return view('reportes.index', compact('reportes'));
+        $reportesCheckouts = [
+            [
+                'titulo' => 'Reporte de Checkouts',
+                'descripcion' => 'Filtra por técnico, edificio y fechas.',
+                'ruta' => route('reportes.checkouts'),
+                'requiere_fechas' => true,
+            ],
+            [
+                'titulo' => 'Checkouts finalizados',
+                'descripcion' => 'Listado de checkouts cerrados.',
+                'ruta' => route('checkouts.cerrados'),
+                'requiere_fechas' => false,
+            ],
+        ];
+
+        return view('reportes.index', compact('reportesTermos', 'reportesCheckouts'));
     }
 
     public function solicitudesSinVisita()
@@ -281,5 +297,69 @@ class ReporteController extends Controller
         return $pdf->download(
             'reporte-gestiones-' . now()->format('d-m-Y') . '.pdf'
         );
+    }
+
+    public function checkouts(Request $request)
+    {
+        $query = \App\Models\Checkout::with(['tecnico', 'edificio']);
+
+        if ($request->tecnico_id) {
+            $query->where('tecnico_id', $request->tecnico_id);
+        }
+
+        if ($request->edificio_id) {
+            $query->where('edificio_id', $request->edificio_id);
+        }
+
+        if ($request->desde && $request->hasta) {
+            $query->whereBetween('fecha_inicio', [$request->desde, $request->hasta]);
+        }
+
+        $checkouts = $query->get();
+
+        $tecnicos = \App\Models\Tecnicos::all();
+        $edificios = \App\Models\Edificio::all();
+
+        return view('reportes.checkouts', compact('checkouts', 'tecnicos', 'edificios'));
+    }
+
+    public function checkoutsPdf(Request $request)
+    {
+        $query = \App\Models\Checkout::with(['edificio', 'tecnico']);
+
+        if ($request->filled(['desde', 'hasta'])) {
+            $query->whereBetween('fecha_inicio', [
+                \Carbon\Carbon::parse($request->desde)->startOfDay(),
+                \Carbon\Carbon::parse($request->hasta)->endOfDay()
+            ]);
+        }
+
+        if ($request->filled('tecnico_id')) {
+            $query->where('tecnico_id', $request->tecnico_id);
+        }
+
+        if ($request->filled('edificio_id')) {
+            $query->where('edificio_id', $request->edificio_id);
+        }
+
+        $checkouts = $query->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView(
+            'reportes.pdf.checkouts',
+            compact('checkouts')
+        )->setPaper('A4', 'landscape');
+
+        return $pdf->download('reporte-checkouts.pdf');
+    }
+
+    public function CheckoutsExcel(Request $request)
+    {
+        $checkouts = Checkout::with(['edificio', 'tecnico'])
+            ->whereBetween('fecha_inicio', [$request->desde, $request->hasta])
+            ->get();
+
+        return response()->view('reportes.excel.checkouts', compact('checkouts'))
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="reporte-checkouts.xls"');
     }
 }

@@ -64,6 +64,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reportes/buscar-gestion', [ReporteController::class, 'buscarGestion'])->name('reportes.buscar_gestion');
     Route::get('/reportes/maestro', [ReporteController::class, 'reporteMaestro'])->name('reportes.maestro');
     Route::get('/reportes/maestro/pdf', [ReporteController::class, 'reporteMaestroPdf'])->name('reportes.maestro_pdf');
+    Route::get('/reportes/checkouts', [ReporteController::class, 'checkouts'])
+        ->name('reportes.checkouts');
+    Route::get('/reportes/checkouts/pdf', [ReporteController::class, 'checkoutsPdf'])
+        ->name('reportes.checkouts.pdf');
+
+    Route::get('/reportes/checkouts/excel', [ReporteController::class, 'checkoutsExcel'])
+        ->name('reportes.checkouts.excel');
 
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
