@@ -33,9 +33,11 @@
                 <div class="card-body">
 
                     <div class="row g-3">
+
+                        {{-- EDIFICIO --}}
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Edificio</label>
-                            <select name="edificio_id" class="form-select @error('edificio_id') is-invalid @enderror">
+                            <select name="edificio_id" class="form-select">
                                 <option value="">— Seleccione un edificio —</option>
                                 @foreach ($edificios as $e)
                                     <option value="{{ $e->id }}"
@@ -44,11 +46,9 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('edificio_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
+                        {{-- TECNICO --}}
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Técnico</label>
                             <select name="tecnico_id" class="form-select">
@@ -59,20 +59,16 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('tecnico_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
+                        {{-- BLOQUE --}}
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Bloque</label>
-                            <input type="text" name="bloque" class="form-control @error('bloque') is-invalid @enderror"
+                            <input type="text" name="bloque" class="form-control"
                                 placeholder="Ej: Bloque A" value="{{ old('bloque') }}">
-                            @error('bloque')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
+                        {{-- FECHAS --}}
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Fecha Inicio</label>
                             <input type="date" name="fecha_inicio" class="form-control"
@@ -84,45 +80,26 @@
                             <input type="date" name="fecha_termino" class="form-control"
                                 value="{{ old('fecha_termino') }}">
                         </div>
+
+                        {{-- 🔥 NUEVO CAMPO --}}
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Monto Neto</label>
+                            <input type="number" name="monto_neto" step="1" min="0"
+                                class="form-control @error('monto_neto') is-invalid @enderror"
+                                placeholder="Ej: 150000"
+                                value="{{ old('monto_neto') }}">
+
+                            @error('monto_neto')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                     </div>
 
                 </div>
             </div>
 
-            {{-- SECCIÓN 2: ARTÍCULOS --}}
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white fw-semibold">
-                    <i class="bi bi-tags me-2"></i> Artículos
-                </div>
-                <div class="card-body">
-
-                    <button type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal"
-                        data-bs-target="#modalArticulos">
-                        <i class="bi bi-plus-circle me-1"></i> Agregar artículos
-                    </button>
-
-                    <table class="table table-bordered table-sm">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Artículo</th>
-                                <th class="text-center" style="width: 120px;">Cantidad</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaArticulos">
-                            <tr>
-                                <td colspan="2" class="text-center text-muted py-3">
-                                    <i class="bi bi-inbox me-1"></i> No hay artículos seleccionados
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div id="inputsArticulos"></div>
-
-                </div>
-            </div>
-
-            {{-- SECCIÓN 3: DOCUMENTOS --}}
+            {{-- SECCIÓN DOCUMENTOS --}}
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-primary text-white fw-semibold">
                     <i class="bi bi-file-earmark-pdf me-2"></i> Documentos PDF
@@ -153,85 +130,5 @@
 
         </form>
 
-        @include('checkouts.modal_articulos')
-
     </div>
 @endsection
-
-{{-- 🔥 SCRIPT COMPLETO --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        document.getElementById('btnGuardarArticulos')
-            .addEventListener('click', function() {
-
-                let articulosSeleccionados = [];
-
-                document.querySelectorAll('.cantidad').forEach(input => {
-
-                    let cantidad = parseInt(input.value);
-
-                    if (cantidad > 0) {
-                        articulosSeleccionados.push({
-                            id: input.dataset.id,
-                            nombre: input.dataset.nombre,
-                            cantidad: cantidad
-                        });
-                    }
-
-                });
-
-                renderTabla(articulosSeleccionados);
-                generarInputs(articulosSeleccionados);
-
-            });
-
-    });
-
-
-    // 🔥 TABLA
-    function renderTabla(articulos) {
-
-        const tabla = document.getElementById('tablaArticulos');
-        tabla.innerHTML = '';
-
-        if (articulos.length === 0) {
-            tabla.innerHTML = `
-            <tr>
-                <td colspan="2" class="text-center text-muted">
-                    No hay artículos seleccionados
-                </td>
-            </tr>
-        `;
-            return;
-        }
-
-        articulos.forEach(a => {
-            tabla.innerHTML += `
-            <tr>
-                <td>${a.nombre}</td>
-                <td>${a.cantidad}</td>
-            </tr>
-        `;
-        });
-
-    }
-
-
-    // 🔥 INPUTS PARA BACKEND
-    function generarInputs(articulos) {
-
-        const contenedor = document.getElementById('inputsArticulos');
-        contenedor.innerHTML = '';
-
-        articulos.forEach((a, index) => {
-
-            contenedor.innerHTML += `
-            <input type="hidden" name="articulos[${index}][id]" value="${a.id}">
-            <input type="hidden" name="articulos[${index}][cantidad]" value="${a.cantidad}">
-        `;
-
-        });
-
-    }
-</script>

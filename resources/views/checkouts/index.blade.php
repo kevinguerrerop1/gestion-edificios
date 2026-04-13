@@ -50,7 +50,7 @@
                     <th>Dpto.</th>
                     <th>Inicio</th>
                     <th>Término</th>
-                    <th>Artículos</th>
+                    <th>Monto Neto</th>
                     <th>PDF</th>
                     <th>Estado</th>
                     <th>OC</th>
@@ -81,10 +81,12 @@
                             {{ \Carbon\Carbon::parse($c->fecha_termino)->format('d-m-Y') }}
                         </td>
 
-                        <td class="text-center">
-                            <span class="badge bg-primary px-3">
-                                {{ $c->detalles->sum('cantidad') }}
-                            </span>
+                        <td class="text-end fw-semibold text-success">
+                            @if ($c->monto_neto)
+                                ${{ number_format($c->monto_neto, 0, ',', '.') }}
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
                         </td>
 
                         {{-- PDFS --}}

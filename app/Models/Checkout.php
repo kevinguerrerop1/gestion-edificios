@@ -19,8 +19,8 @@ class Checkout extends Model
         'bloque',
         'fecha_inicio',
         'fecha_termino',
-        'pdf_solicitud',
-        'pdf_entrega'
+        'monto_neto',
+        'estado'
     ];
 
     public function detalles()

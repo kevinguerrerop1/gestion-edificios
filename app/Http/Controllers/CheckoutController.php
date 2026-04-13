@@ -46,46 +46,36 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
-        //dd(public_path('checkout'));
-
         $request->validate([
             'edificio_id' => 'required',
             'tecnico_id' => 'required',
             'bloque' => 'required',
+            'monto_neto' => 'nullable|numeric'
         ]);
 
-        // 🔹 Crear checkout
         $checkout = Checkout::create([
             'edificio_id' => $request->edificio_id,
             'tecnico_id' => $request->tecnico_id,
             'bloque' => $request->bloque,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_termino' => $request->fecha_termino,
+            'monto_neto' => $request->monto_neto,
             'estado' => 'pendiente',
         ]);
 
-        // 🔥 Guardar artículos (DETALLES)
-        if ($request->has('articulos')) {
-            foreach ($request->articulos as $a) {
-                Checkout_detalles::create([
-                    'checkout_id' => $checkout->id,
-                    'articulo_id' => $a['id'],
-                    'cantidad' => $a['cantidad'],
-                ]);
-            }
-        }
-
         // 📄 PDFs
         if ($request->hasFile('pdf_solicitud')) {
-            $checkout->pdf_solicitud = $request->file('pdf_solicitud')->store('', 'public_direct');
+            $checkout->pdf_solicitud = $request->file('pdf_solicitud')
+                ->store('', 'public_direct');
         }
 
         if ($request->hasFile('pdf_entrega')) {
-            $checkout->pdf_entrega = $request->file('pdf_entrega')->store('', 'public_direct');
+            $checkout->pdf_entrega = $request->file('pdf_entrega')
+                ->store('', 'public_direct');
         }
 
         $checkout->save();
-        //dd($checkout->pdf_solicitud, $checkout->pdf_entrega);
+
         return redirect()
             ->route('checkouts.index')
             ->with('success', 'Check-Out #' . $checkout->id . ' guardado correctamente.');
@@ -134,19 +124,20 @@ class CheckoutController extends Controller
         $request->validate([
             'edificio_id' => 'required',
             'tecnico_id' => 'required',
-            'bloque' => 'required'
+            'bloque' => 'required',
+            'monto_neto' => 'nullable|numeric'
         ]);
 
-        // 🔹 Actualizar datos básicos
         $checkout->update([
             'edificio_id' => $request->edificio_id,
             'tecnico_id' => $request->tecnico_id,
             'bloque' => $request->bloque,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_termino' => $request->fecha_termino,
+            'monto_neto' => $request->monto_neto,
         ]);
 
-        // 🔥 PDFs (reemplazo opcional)
+        // 📄 PDFs (reemplazo opcional)
         if ($request->hasFile('pdf_solicitud')) {
             $checkout->pdf_solicitud = $request->file('pdf_solicitud')
                 ->store('', 'public_direct');
@@ -159,7 +150,8 @@ class CheckoutController extends Controller
 
         $checkout->save();
 
-        return redirect()->route('checkouts.index')
+        return redirect()
+            ->route('checkouts.index')
             ->with('success', 'Check-Out actualizado correctamente');
     }
 
