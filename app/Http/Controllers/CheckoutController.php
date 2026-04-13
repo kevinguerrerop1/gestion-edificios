@@ -9,6 +9,7 @@ use App\Models\Articulos;
 use App\Models\Tecnicos;
 use App\Models\CheckoutObservacion;
 use App\Models\Checkout_detalles;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CheckoutController extends Controller
 {
@@ -261,5 +262,14 @@ class CheckoutController extends Controller
         $checkout->save();
 
         return back()->with('success', 'Documentos guardados correctamente');
+    }
+
+    public function pdf($id)
+    {
+        $checkout = Checkout::with(['edificio', 'tecnico'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('checkouts.pdf', compact('checkout'));
+
+        return $pdf->download('checkout_' . $checkout->id . '.pdf');
     }
 }

@@ -68,7 +68,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('reportes.checkouts');
     Route::get('/reportes/checkouts/pdf', [ReporteController::class, 'checkoutsPdf'])
         ->name('reportes.checkouts.pdf');
-
+    Route::get('/checkouts/{id}/pdf', [CheckoutController::class, 'pdf'])
+        ->name('checkouts.pdf');
     Route::get('/reportes/checkouts/excel', [ReporteController::class, 'checkoutsExcel'])
         ->name('reportes.checkouts.excel');
 
