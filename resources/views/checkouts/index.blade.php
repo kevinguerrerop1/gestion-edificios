@@ -248,6 +248,15 @@
                                     class="btn btn-sm btn-outline-primary w-100">
                                     💬 Historial
                                 </a>
+                                <form action="{{ route('checkouts.destroy', $c->id) }}" method="POST"
+                                    onsubmit="return confirm('¿Seguro que deseas eliminar este check-out?')">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button class="btn btn-sm btn-outline-danger w-100">
+                                        🗑 Eliminar
+                                    </button>
+                                </form>
 
                             </div>
                         </td>

@@ -108,41 +108,48 @@
 
                                 {{-- CHECK-OUT --}}
                                 <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-        <i class="bi bi-box-seam me-1"></i> Check-Out
-    </a>
+                                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                        <i class="bi bi-box-seam me-1"></i> Check-Out
+                                    </a>
 
-    <ul class="dropdown-menu shadow-sm">
+                                    <ul class="dropdown-menu shadow-sm">
 
-        <li>
-            <a class="dropdown-item" href="{{ route('checkouts.index') }}">
-                <i class="bi bi-clipboard-check me-2"></i> Check-Outs
-            </a>
-        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('checkouts.index') }}">
+                                                <i class="bi bi-clipboard-check me-2"></i> Check-Outs
+                                            </a>
+                                        </li>
 
-        {{-- 🔥 NUEVA OPCIÓN --}}
-        <li>
-            <a class="dropdown-item" href="{{ route('checkouts.cerrados') }}">
-                <i class="bi bi-check-circle me-2 text-success"></i> Finalizados
-            </a>
-        </li>
+                                        {{-- 🔥 NUEVA OPCIÓN --}}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('checkouts.cerrados') }}">
+                                                <i class="bi bi-check-circle me-2 text-success"></i> Finalizados
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('checkouts.papelera') }}" class="dropdown-item">
+                                                🗑 Papelera ({{ \App\Models\Checkout::onlyTrashed()->count() }})
+                                            </a>
+                                        </li>
 
-        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
 
-        <li>
-            <a class="dropdown-item" href="{{ route('articulos.index') }}">
-                <i class="bi bi-tags me-2"></i> Artículos
-            </a>
-        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('articulos.index') }}">
+                                                <i class="bi bi-tags me-2"></i> Artículos
+                                            </a>
+                                        </li>
 
-        <li>
-            <a class="dropdown-item" href="{{ route('tecnicos.index') }}">
-                <i class="bi bi-person-gear me-2"></i> Técnicos
-            </a>
-        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('tecnicos.index') }}">
+                                                <i class="bi bi-person-gear me-2"></i> Técnicos
+                                            </a>
+                                        </li>
 
-    </ul>
-</li>
+                                    </ul>
+                                </li>
 
                                 {{-- GESTIÓN --}}
                                 <li class="nav-item dropdown">

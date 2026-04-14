@@ -156,15 +156,37 @@ class CheckoutController extends Controller
             ->with('success', 'Check-Out actualizado correctamente');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Checkout  $checkout
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Checkout $checkout)
+    public function destroy($id)
     {
-        //
+        $checkout = Checkout::findOrFail($id);
+        $checkout->delete();
+
+        return back()->with('success', 'Check-Out eliminado correctamente');
+    }
+
+    public function papelera()
+    {
+        $checkouts = Checkout::onlyTrashed()
+            ->with(['edificio', 'tecnico'])
+            ->get();
+
+        return view('checkouts.papelera', compact('checkouts'));
+    }
+
+    public function restaurar($id)
+    {
+        $checkout = Checkout::onlyTrashed()->findOrFail($id);
+        $checkout->restore();
+
+        return back()->with('success', 'Check-Out restaurado correctamente');
+    }
+
+    public function forceDelete($id)
+    {
+        $checkout = Checkout::onlyTrashed()->findOrFail($id);
+        $checkout->forceDelete();
+
+        return back()->with('success', 'Check-Out eliminado definitivamente');
     }
 
     public function agregarArticulos(Request $request, $id)

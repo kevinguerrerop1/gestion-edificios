@@ -9,10 +9,13 @@ use App\Models\Tecnicos;
 use App\Models\Edificio;
 use App\Models\Checkout_detalles;
 use App\Models\CheckoutObservacion;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Checkout extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'edificio_id',
         'tecnico_id',
@@ -20,7 +23,13 @@ class Checkout extends Model
         'fecha_inicio',
         'fecha_termino',
         'monto_neto',
-        'estado'
+        'estado',
+        'pdf_solicitud',
+        'pdf_entrega',
+        'pdf_oc',
+        'pdf_factura',
+        'nro_oc',
+        'nro_factura'
     ];
 
     public function detalles()

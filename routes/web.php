@@ -73,6 +73,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reportes/checkouts/excel', [ReporteController::class, 'checkoutsExcel'])
         ->name('reportes.checkouts.excel');
 
+    Route::delete('/checkouts/{id}', [CheckoutController::class, 'destroy'])
+        ->name('checkouts.destroy');
+
+    Route::get('/checkouts/papelera', [CheckoutController::class, 'papelera'])
+        ->name('checkouts.papelera');
+
+    Route::post('/checkouts/{id}/restaurar', [CheckoutController::class, 'restaurar'])
+        ->name('checkouts.restaurar');
+
+    Route::delete('/checkouts/{id}/force', [CheckoutController::class, 'forceDelete'])
+        ->name('checkouts.forceDelete');
+
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
 
