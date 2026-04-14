@@ -2,6 +2,18 @@
 
 @section('content')
     <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-clipboard-check fs-3 me-2 text-primary"></i>
+                <div>
+                    <h4 class="mb-0 fw-bold">Listado de Check-Outs</h4>
+                    <small class="text-muted">Gestión de check-outs registrados</small>
+                </div>
+            </div>
+            <a href="{{ route('checkouts.create') }}" class="btn btn-success">
+                <i class="bi bi-plus-circle me-1"></i> Nuevo Check-Out
+            </a>
+        </div>
         <ul class="nav nav-tabs mb-3">
 
             {{-- EN PROCESO --}}
@@ -19,21 +31,7 @@
                     ✔ Cerrados
                 </a>
             </li>
-
         </ul>
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-clipboard-check fs-3 me-2 text-primary"></i>
-                <div>
-                    <h4 class="mb-0 fw-bold">Listado de Check-Outs</h4>
-                    <small class="text-muted">Gestión de check-outs registrados</small>
-                </div>
-            </div>
-            <a href="{{ route('checkouts.create') }}" class="btn btn-success">
-                <i class="bi bi-plus-circle me-1"></i> Nuevo Check-Out
-            </a>
-        </div>
-
         @if (session('success'))
             <div class="alert alert-success d-flex align-items-center gap-2">
                 <i class="bi bi-check-circle-fill"></i>
@@ -203,61 +201,31 @@
 
                         </td>
                         {{-- ACCIONES --}}
-                        <td>
-                            <div class="d-flex flex-column gap-1">
-
-                                <a href="{{ route('checkouts.show', $c->id) }}" class="btn btn-sm btn-outline-dark w-100">
-                                    👁 Ver
-                                </a>
-
-                                {{-- FLUJO
-                                @if ($c->estado == 'pendiente')
-                                    <form method="POST" action="{{ route('checkouts.estado', $c->id) }}">
-                                        @csrf
-                                        <input type="hidden" name="estado" value="en_revision">
-                                        <button class="btn btn-sm btn-primary w-100">🔍 Revisar</button>
-                                    </form>
-                                @endif
-
-                                @if ($c->estado == 'en_revision')
-                                    <form method="POST" action="{{ route('checkouts.estado', $c->id) }}">
-                                        @csrf
-                                        <input type="hidden" name="estado" value="con_reparos">
-                                        <button class="btn btn-sm btn-warning w-100">⚠ Reparos</button>
-                                    </form>
-                                @endif
-
-                                @if ($c->estado == 'con_reparos')
-                                    <form method="POST" action="{{ route('checkouts.estado', $c->id) }}">
-                                        @csrf
-                                        <input type="hidden" name="estado" value="finalizado">
-                                        <button class="btn btn-sm btn-success w-100">✔ Finalizar</button>
-                                    </form>
-                                @endif
-                                --}}
-                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal"
-                                    data-bs-target="#modalDocs{{ $c->id }}">
-                                    📄 OC/Factura
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                    Acciones
                                 </button>
-                                <a href="{{ route('checkouts.edit', $c->id) }}"
-                                    class="btn btn-sm btn-outline-warning w-100">
-                                    ✏️ Editar
-                                </a>
-
-                                <a href="{{ route('checkouts.historial', $c->id) }}"
-                                    class="btn btn-sm btn-outline-primary w-100">
-                                    💬 Historial
-                                </a>
-                                <form action="{{ route('checkouts.destroy', $c->id) }}" method="POST"
-                                    onsubmit="return confirm('¿Seguro que deseas eliminar este check-out?')">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button class="btn btn-sm btn-outline-danger w-100">
-                                        🗑 Eliminar
-                                    </button>
-                                </form>
-
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ route('checkouts.show', $c->id) }}">👁 Ver</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('checkouts.edit', $c->id) }}">✏️ Editar</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('checkouts.historial', $c->id) }}">💬
+                                            Historial</a></li>
+                                    <li><button class="dropdown-item" data-bs-toggle="modal"
+                                            data-bs-target="#modalDocs{{ $c->id }}">📄 OC/Factura</button></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <form action="{{ route('checkouts.destroy', $c->id) }}" method="POST"
+                                            onsubmit="return confirm('¿Seguro?')">
+                                            @csrf @method('DELETE')
+                                            <button class="dropdown-item text-danger">🗑 Eliminar</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </div>
                         </td>
                     </tr>
