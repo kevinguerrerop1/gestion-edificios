@@ -11,7 +11,9 @@
                 <select name="tecnico_id" class="form-control">
                     <option value="">Todos los técnicos</option>
                     @foreach ($tecnicos as $t)
-                        <option value="{{ $t->id }}">{{ $t->nombre }}</option>
+                        <option value="{{ $t->id }}" {{ request('tecnico_id') == $t->id ? 'selected' : '' }}>
+                            {{ $t->nombre }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -20,17 +22,19 @@
                 <select name="edificio_id" class="form-control">
                     <option value="">Todos los edificios</option>
                     @foreach ($edificios as $e)
-                        <option value="{{ $e->id }}">{{ $e->nombre }}</option>
+                        <option value="{{ $e->id }}" {{ request('edificio_id') == $e->id ? 'selected' : '' }}>
+                            {{ $e->nombre }}
+                        </option>
                     @endforeach
                 </select>
             </div>
 
             <div class="col-md-2">
-                <input type="date" name="desde" class="form-control">
+                <input type="date" name="desde" value="{{ request('desde') }}" class="form-control">
             </div>
 
             <div class="col-md-2">
-                <input type="date" name="hasta" class="form-control">
+                <input type="date" name="hasta" value="{{ request('hasta') }}" class="form-control">
             </div>
 
             <div class="col-md-2">
@@ -38,6 +42,8 @@
             </div>
 
         </form>
+
+        {{-- EXPORT --}}
         <div class="mb-3 d-flex gap-2">
 
             <a href="{{ request()->filled(['desde', 'hasta']) ? route('reportes.checkouts.pdf', request()->all()) : '#' }}"
@@ -52,31 +58,81 @@
 
         </div>
 
-        <table class="table table-bordered">
-            <thead>
+        {{-- TABLA --}}
+        <table class="table table-bordered table-hover align-middle">
+
+            <thead class="table-dark text-center">
                 <tr>
                     <th>ID</th>
                     <th>Edificio</th>
                     <th>Técnico</th>
-                    <th>Fecha</th>
+                    <th>Dpto</th>
+                    <th>Inicio</th>
+                    <th>Término</th>
                     <th>Estado</th>
                     <th>OC</th>
                     <th>Factura</th>
+                    <th>Monto</th>
                 </tr>
             </thead>
+
             <tbody>
+
+                @php $total = 0; @endphp
+
                 @foreach ($checkouts as $c)
+                    @php $total += $c->monto_neto ?? 0; @endphp
+
                     <tr>
-                        <td>{{ $c->id }}</td>
+                        <td class="text-center fw-bold">{{ $c->id }}</td>
+
                         <td>{{ $c->edificio->nombre ?? '-' }}</td>
+
                         <td>{{ $c->tecnico->nombre ?? '-' }}</td>
-                        <td>{{ $c->fecha_inicio }}</td>
-                        <td>{{ $c->estado }}</td>
-                        <td>{{ $c->nro_oc }}</td>
-                        <td>{{ $c->nro_factura }}</td>
+
+                        <td class="text-center">{{ $c->bloque ?? '-' }}</td>
+
+                        <td class="text-center">
+                            {{ \Carbon\Carbon::parse($c->fecha_inicio)->format('d-m-Y') }}
+                        </td>
+
+                        <td class="text-center">
+                            {{ $c->fecha_termino ? \Carbon\Carbon::parse($c->fecha_termino)->format('d-m-Y') : '-' }}
+                        </td>
+
+                        <td class="text-center">
+                            <span
+                                class="badge
+                            @if ($c->estado == 'pendiente') bg-secondary
+                            @elseif($c->estado == 'en_revision') bg-primary
+                            @elseif($c->estado == 'con_reparos') bg-warning text-dark
+                            @elseif($c->estado == 'finalizado') bg-success @endif">
+                                {{ ucfirst(str_replace('_', ' ', $c->estado)) }}
+                            </span>
+                        </td>
+
+                        <td class="text-center">{{ $c->nro_oc ?? '—' }}</td>
+
+                        <td class="text-center">{{ $c->nro_factura ?? '—' }}</td>
+
+                        <td class="text-end fw-bold text-success">
+                            ${{ number_format($c->monto_neto ?? 0, 0, ',', '.') }}
+                        </td>
                     </tr>
                 @endforeach
+
             </tbody>
+
+            {{-- TOTAL --}}
+            <tfoot>
+                <tr class="table-light fw-bold">
+                    <td colspan="9" class="text-end">TOTAL</td>
+                    <td class="text-end text-success">
+                        ${{ number_format($total, 0, ',', '.') }}
+                    </td>
+                </tr>
+            </tfoot>
+
         </table>
 
     </div>

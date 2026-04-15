@@ -2,12 +2,17 @@
 
 <head>
     <meta charset="UTF-8">
+
     <style>
+        body {
+            font-family: Arial;
+            font-size: 12px;
+            margin: 20px;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
-            font-family: Arial;
-            font-size: 12px;
         }
 
         th {
@@ -23,52 +28,43 @@
             text-align: center;
         }
 
-        .titulo {
-            background: #343a40;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-        }
-
         .total {
             font-weight: bold;
             background: #f2f2f2;
+        }
+
+        .header td {
+            border: none;
         }
     </style>
 </head>
 
 <body>
 
-    <table border="1">
-
+    {{-- 🔥 HEADER CON LOGO BASE64 --}}
+    <table class="header" border="0" style="margin-bottom:15px;">
         <tr>
-            <td colspan="7" class="titulo">
-                REPORTE DE CHECKOUTS
+            <td style="text-align:right; font-size:12px;">
+                <strong>REPORTE DE CHECKOUTS</strong><br>
+                Fecha: {{ date('d-m-Y') }}<br>
+                Desde: {{ request('desde') }}<br>
+                Hasta: {{ request('hasta') }}
             </td>
-        </tr>
 
-        <tr>
-            <td colspan="7"></td>
         </tr>
+    </table>
 
-        <tr>
-            <td><strong>Desde</strong></td>
-            <td>{{ request('desde') }}</td>
-            <td><strong>Hasta</strong></td>
-            <td>{{ request('hasta') }}</td>
-        </tr>
-
-        <tr>
-            <td colspan="7"></td>
-        </tr>
+    {{-- 🔥 TABLA --}}
+    <table border="1">
 
         <tr>
             <th>ID</th>
             <th>EDIFICIO</th>
             <th>TÉCNICO</th>
+            <th>DPTO</th>
             <th>FECHA</th>
             <th>ESTADO</th>
+            <th>MONTO NETO</th>
             <th>OC</th>
             <th>FACTURA</th>
         </tr>
@@ -78,16 +74,32 @@
                 <td>{{ $c->id }}</td>
                 <td>{{ $c->edificio->nombre ?? '-' }}</td>
                 <td>{{ $c->tecnico->nombre ?? '-' }}</td>
+                <td>{{ $c->bloque ?? '-' }}</td>
                 <td>{{ $c->fecha_inicio }}</td>
                 <td>{{ strtoupper($c->estado) }}</td>
+
+                <td>
+                    @if ($c->monto_neto)
+                        ${{ number_format($c->monto_neto, 0, ',', '.') }}
+                    @else
+                        -
+                    @endif
+                </td>
+
                 <td>{{ $c->nro_oc }}</td>
                 <td>{{ $c->nro_factura }}</td>
             </tr>
         @endforeach
 
+        {{-- TOTAL --}}
         <tr class="total">
             <td colspan="6">TOTAL</td>
-            <td>{{ $checkouts->count() }}</td>
+            <td>
+                ${{ number_format($checkouts->sum('monto_neto'), 0, ',', '.') }}
+            </td>
+            <td colspan="2">
+                {{ $checkouts->count() }} registros
+            </td>
         </tr>
 
     </table>
