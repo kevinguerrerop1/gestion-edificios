@@ -46,10 +46,11 @@ class EdificioController extends Controller
             'nombre'    => 'required|string|max:255',
             'direccion' => 'nullable|string|max:255',
             'comuna'    => 'nullable|string|max:255',
+            'color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
         ]);
 
         Edificio::create(
-            $request->only('nombre', 'direccion', 'comuna')
+            $request->only('nombre', 'direccion', 'comuna', 'color')
         );
 
         return redirect()
@@ -76,12 +77,16 @@ class EdificioController extends Controller
     public function update(Request $request, Edificio $edificio)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre'    => 'required|string|max:255',
             'direccion' => 'nullable|string|max:255',
-            'ciudad' => 'nullable|string|max:255',
+            'comuna'    => 'nullable|string|max:255',
+            'color'     => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
         ]);
+        //dd($request->all());
 
-        $edificio->update($request->only('nombre', 'direccion', 'ciudad'));
+        $edificio->update(
+            $request->only('nombre', 'direccion', 'comuna', 'color')
+        );
 
         return redirect()
             ->route('edificios.index')

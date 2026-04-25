@@ -43,8 +43,23 @@
                                 <input type="text" name="comuna" class="form-control" placeholder="Ej: Ñuñoa"
                                     value="{{ old('comuna') }}">
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">Color del edificio</label>
 
+                                <div class="d-flex gap-2 align-items-center">
 
+                                    {{-- Selector visual --}}
+                                    <input type="color" id="colorPicker"
+                                        value="{{ old('color', $edificio->color ?? '#6c757d') }}"
+                                        class="form-control form-control-color">
+
+                                    {{-- Valor real que se guarda --}}
+                                    <input type="text" id="colorInput" name="color"
+                                        value="{{ old('color', $edificio->color ?? '#6c757d') }}" class="form-control"
+                                        placeholder="#000000">
+
+                                </div>
+                            </div>
                             <div class="d-flex justify-content-between">
                                 <a href="{{ route('edificios.index') }}" class="btn btn-secondary">
                                     ← Volver
@@ -54,14 +69,30 @@
                                     💾 Guardar edificio
                                 </button>
                             </div>
-
                         </form>
-
                     </div>
                 </div>
-
             </div>
         </div>
-
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const picker = document.getElementById('colorPicker');
+            const input = document.getElementById('colorInput');
+
+            // Cuando cambias el color visual
+            picker.addEventListener('input', function() {
+                input.value = this.value;
+            });
+
+            // Cuando escribes manual
+            input.addEventListener('input', function() {
+                if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+                    picker.value = this.value;
+                }
+            });
+
+        });
+    </script>
 @endsection

@@ -13,27 +13,50 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class CheckoutController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         /*$checkouts = Checkout::with(['edificio', 'detalles'])
             ->latest()
             ->get();
 
-        return view('checkouts.index', compact('checkouts'));*/
+        return view('checkouts.index', compact('checkouts'));
         $checkouts = Checkout::with(['edificio', 'tecnico', 'detalles'])
             ->where('estado', '!=', 'finalizado') // 🔥 ESTA ES LA CLAVE
             ->get();
 
-        return view('checkouts.index', compact('checkouts'));
+        return view('checkouts.index', compact('checkouts'));*/
+
+        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])
+            ->where('estado', '!=', 'finalizado');
+
+        if ($request->filled('edificio')) {
+            $query->where('edificio_id', $request->edificio);
+        }
+
+        $checkouts = $query->get();
+
+        // Orden en el filtro de edificios
+        $edificios = Edificio::orderBy('nombre')->get();
+
+        return view('checkouts.index', compact('checkouts', 'edificios'));
     }
 
-    public function cerrados()
-    {
-        $checkouts = Checkout::with(['edificio', 'tecnico', 'detalles'])
-            ->where('estado', 'finalizado')
-            ->get();
 
-        return view('checkouts.cerrados', compact('checkouts'));
+    public function cerrados(Request $request)
+    {
+        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])
+            ->where('estado', 'finalizado');
+
+        if ($request->filled('edificio')) {
+            $query->where('edificio_id', $request->edificio);
+        }
+
+        $checkouts = $query->get();
+
+        // Orden en el filtro de edificios
+        $edificios = Edificio::orderBy('nombre')->get();
+
+        return view('checkouts.cerrados', compact('checkouts', 'edificios'));
     }
 
     public function create()

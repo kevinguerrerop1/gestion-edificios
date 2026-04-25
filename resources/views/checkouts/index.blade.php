@@ -1,6 +1,55 @@
 @extends('layouts.app')
 
 @section('content')
+    <style>
+        .filtro-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scroll-behavior: smooth;
+        }
+
+        .filtro-scroll::-webkit-scrollbar {
+            height: 5px;
+        }
+
+        .filtro-scroll::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        .chip {
+            flex: 0 0 auto;
+            padding: 7px 14px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            text-decoration: none;
+            font-size: 13px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .chip:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .chip.active {
+            background: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+
+        .chip .badge {
+            font-size: 10px;
+            padding: 3px 6px;
+        }
+    </style>
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="d-flex align-items-center">
@@ -14,30 +63,76 @@
                 <i class="bi bi-plus-circle me-1"></i> Nuevo Check-Out
             </a>
         </div>
-        <ul class="nav nav-tabs mb-3">
 
+        <ul class="nav nav-tabs mb-3">
             {{-- EN PROCESO --}}
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('checkouts.index') ? 'active' : '' }}"
-                    href="{{ route('checkouts.index') }}">
-                    🔄 En proceso
-                </a>
-            </li>
+            <a class="nav-link {{ request()->routeIs('checkouts.index') ? 'active' : '' }}"
+                href="{{ route('checkouts.index', request()->only('edificio')) }}">
+                🔄 En proceso
+            </a>
 
             {{-- CERRADOS --}}
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('checkouts.cerrados') ? 'active' : '' }}"
-                    href="{{ route('checkouts.cerrados') }}">
-                    ✔ Cerrados
-                </a>
-            </li>
+            <a class="nav-link {{ request()->routeIs('checkouts.cerrados') ? 'active' : '' }}"
+                href="{{ route('checkouts.cerrados', request()->only('edificio')) }}">
+                ✔ Cerrados
+            </a>
         </ul>
+
         @if (session('success'))
             <div class="alert alert-success d-flex align-items-center gap-2">
                 <i class="bi bi-check-circle-fill"></i>
                 {{ session('success') }}
             </div>
         @endif
+        {{-- FILTRO POR EDIFICIO --}}
+        @php
+            $route = Route::currentRouteName();
+        @endphp
+
+        <div class="mb-3">
+
+            {{-- 🔍 BUSCADOR --}}
+            <div class="mb-2">
+                <input type="text" id="buscadorEdificio" class="form-control form-control-sm"
+                    placeholder="🔍 Buscar edificio...">
+            </div>
+
+            {{-- 🎯 CHIPS --}}
+            <div class="filtro-scroll" id="listaEdificios">
+
+                <div class="mb-3">
+                    <div class="d-flex overflow-auto pb-2" id="scrollEdificios">
+
+                        {{-- TODOS --}}
+                        <a href="{{ request()->fullUrlWithQuery(['edificio_id' => null]) }}"
+                            class="btn btn-sm me-2 flex-shrink-0 {{ request('edificio_id') ? 'btn-outline-secondary' : 'btn-dark' }}">
+                            Todos
+                        </a>
+
+                        {{-- EDIFICIOS --}}
+                        @foreach ($edificios as $e)
+                            @php
+                                $activo = request('edificio_id') == $e->id;
+                                $color = $e->color ?? '#6c757d';
+                            @endphp
+
+                            <a href="{{ request()->fullUrlWithQuery(['edificio_id' => $e->id]) }}"
+                                class="btn btn-sm me-2 flex-shrink-0"
+                                style="
+                    background-color: {{ $activo ? $color : 'transparent' }};
+                    border: 2px solid {{ $color }};
+                    color: {{ $activo ? '#fff' : $color }};
+                ">
+                                {{ $e->nombre }}
+                            </a>
+                        @endforeach
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
 
         <table class="table table-bordered table-hover align-middle" id="tabla">
             <thead class="table-dark text-center">
@@ -317,6 +412,63 @@
             </tbody>
         </table>
     </div>
+    <script>
+        document.getElementById('buscadorEdificio').addEventListener('keyup', function() {
+
+            let filtro = this.value.toLowerCase().trim();
+
+            document.querySelectorAll('#listaEdificios .chip').forEach(el => {
+
+                let nombre = el.dataset.nombre || '';
+
+                if (filtro === '') {
+                    el.style.display = 'flex'; // 👈 mantener layout
+                    return;
+                }
+
+                if (nombre.includes(filtro)) {
+                    el.style.display = 'flex';
+                } else {
+                    el.style.display = 'none';
+                }
+
+            });
+
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const contenedor = document.getElementById('listaEdificios');
+
+            if (!contenedor) return;
+
+            // 🔥 RESTAURAR SCROLL (con pequeño delay para asegurar render)
+            setTimeout(() => {
+                const scrollGuardado = sessionStorage.getItem('scrollEdificios');
+                if (scrollGuardado !== null) {
+                    contenedor.scrollLeft = parseInt(scrollGuardado);
+                }
+
+                // 👉 centrar el activo (UX PRO)
+                const activo = contenedor.querySelector('.chip.active');
+                if (activo) {
+                    activo.scrollIntoView({
+                        behavior: 'instant',
+                        inline: 'center',
+                        block: 'nearest'
+                    });
+                }
+
+            }, 100); // 👈 clave
+
+            // 🔥 GUARDAR SCROLL
+            contenedor.addEventListener('scroll', function() {
+                sessionStorage.setItem('scrollEdificios', contenedor.scrollLeft);
+            });
+
+        });
+    </script>
 @endsection
 
 @section('scripts')
