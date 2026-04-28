@@ -26,11 +26,10 @@ class CheckoutController extends Controller
 
         return view('checkouts.index', compact('checkouts'));*/
 
-        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])
-            ->where('estado', '!=', 'finalizado');
+        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])->where('estado', '!=', 'finalizado');
 
-        if ($request->filled('edificio')) {
-            $query->where('edificio_id', $request->edificio);
+        if ($request->filled('edificio_id')) {
+            $query->where('edificio_id', $request->edificio_id);
         }
 
         $checkouts = $query->get();
@@ -41,11 +40,9 @@ class CheckoutController extends Controller
         return view('checkouts.index', compact('checkouts', 'edificios'));
     }
 
-
     public function cerrados(Request $request)
     {
-        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])
-            ->where('estado', 'finalizado');
+        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])->where('estado', 'finalizado');
 
         if ($request->filled('edificio')) {
             $query->where('edificio_id', $request->edificio);
@@ -74,7 +71,7 @@ class CheckoutController extends Controller
             'edificio_id' => 'required',
             'tecnico_id' => 'required',
             'bloque' => 'required',
-            'monto_neto' => 'nullable|numeric'
+            'monto_neto' => 'nullable|numeric',
         ]);
 
         $checkout = Checkout::create([
@@ -89,13 +86,11 @@ class CheckoutController extends Controller
 
         // 📄 PDFs
         if ($request->hasFile('pdf_solicitud')) {
-            $checkout->pdf_solicitud = $request->file('pdf_solicitud')
-                ->store('', 'public_direct');
+            $checkout->pdf_solicitud = $request->file('pdf_solicitud')->store('', 'public_direct');
         }
 
         if ($request->hasFile('pdf_entrega')) {
-            $checkout->pdf_entrega = $request->file('pdf_entrega')
-                ->store('', 'public_direct');
+            $checkout->pdf_entrega = $request->file('pdf_entrega')->store('', 'public_direct');
         }
 
         $checkout->save();
@@ -131,7 +126,6 @@ class CheckoutController extends Controller
         return view('checkouts.edit', compact('checkout', 'tecnicos', 'edificios'));
     }
 
-
     /*public function update(Request $request, $id)
     {
         $checkout = Checkout::findOrFail($id);
@@ -149,7 +143,7 @@ class CheckoutController extends Controller
             'edificio_id' => 'required',
             'tecnico_id' => 'required',
             'bloque' => 'required',
-            'monto_neto' => 'nullable|numeric'
+            'monto_neto' => 'nullable|numeric',
         ]);
 
         $checkout->update([
@@ -163,20 +157,16 @@ class CheckoutController extends Controller
 
         // 📄 PDFs (reemplazo opcional)
         if ($request->hasFile('pdf_solicitud')) {
-            $checkout->pdf_solicitud = $request->file('pdf_solicitud')
-                ->store('', 'public_direct');
+            $checkout->pdf_solicitud = $request->file('pdf_solicitud')->store('', 'public_direct');
         }
 
         if ($request->hasFile('pdf_entrega')) {
-            $checkout->pdf_entrega = $request->file('pdf_entrega')
-                ->store('', 'public_direct');
+            $checkout->pdf_entrega = $request->file('pdf_entrega')->store('', 'public_direct');
         }
 
         $checkout->save();
 
-        return redirect()
-            ->route('checkouts.index')
-            ->with('success', 'Check-Out actualizado correctamente');
+        return redirect()->route('checkouts.index')->with('success', 'Check-Out actualizado correctamente');
     }
 
     public function destroy($id)
@@ -269,12 +259,12 @@ class CheckoutController extends Controller
     public function agregarObservacion(Request $request, $id)
     {
         $request->validate([
-            'observacion' => 'required|string'
+            'observacion' => 'required|string',
         ]);
 
         CheckoutObservacion::create([
             'checkout_id' => $id,
-            'observacion' => $request->observacion
+            'observacion' => $request->observacion,
         ]);
 
         return back()->with('success', 'Observación agregada');
@@ -295,13 +285,11 @@ class CheckoutController extends Controller
         $checkout->nro_factura = $request->nro_factura;
 
         if ($request->hasFile('pdf_oc')) {
-            $checkout->pdf_oc = $request->file('pdf_oc')
-                ->store('', 'public_direct');
+            $checkout->pdf_oc = $request->file('pdf_oc')->store('', 'public_direct');
         }
 
         if ($request->hasFile('pdf_factura')) {
-            $checkout->pdf_factura = $request->file('pdf_factura')
-                ->store('', 'public_direct');
+            $checkout->pdf_factura = $request->file('pdf_factura')->store('', 'public_direct');
         }
 
         $checkout->save();

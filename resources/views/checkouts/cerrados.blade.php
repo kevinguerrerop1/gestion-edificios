@@ -67,13 +67,13 @@
         <ul class="nav nav-tabs mb-3">
             {{-- EN PROCESO --}}
             <a class="nav-link {{ request()->routeIs('checkouts.index') ? 'active' : '' }}"
-                href="{{ route('checkouts.index', request()->only('edificio')) }}">
+                href="{{ route('checkouts.index', request()->only('edificio_id')) }}">
                 🔄 En proceso
             </a>
 
             {{-- CERRADOS --}}
             <a class="nav-link {{ request()->routeIs('checkouts.cerrados') ? 'active' : '' }}"
-                href="{{ route('checkouts.cerrados', request()->only('edificio')) }}">
+                href="{{ route('checkouts.cerrados', request()->only('edificio_id')) }}">
                 ✔ Cerrados
             </a>
         </ul>
@@ -117,12 +117,8 @@
                             @endphp
 
                             <a href="{{ request()->fullUrlWithQuery(['edificio_id' => $e->id]) }}"
-                                class="btn btn-sm me-2 flex-shrink-0"
-                                style="
-                    background-color: {{ $activo ? $color : 'transparent' }};
-                    border: 2px solid {{ $color }};
-                    color: {{ $activo ? '#fff' : $color }};
-                ">
+                                class="btn btn-sm me-2 flex-shrink-0 {{ $activo ? 'activo' : '' }}"
+                                style="background-color: {{ $activo ? $color : 'transparent' }};border: 2px solid {{ $color }};color: {{ $activo ? '#fff' : $color }};">
                                 {{ $e->nombre }}
                             </a>
                         @endforeach
@@ -439,33 +435,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            const contenedor = document.getElementById('listaEdificios');
+            const activo = document.querySelector('#scrollEdificios .activo');
 
-            if (!contenedor) return;
-
-            // 🔥 RESTAURAR SCROLL (con pequeño delay para asegurar render)
-            setTimeout(() => {
-                const scrollGuardado = sessionStorage.getItem('scrollEdificios');
-                if (scrollGuardado !== null) {
-                    contenedor.scrollLeft = parseInt(scrollGuardado);
-                }
-
-                // 👉 centrar el activo (UX PRO)
-                const activo = contenedor.querySelector('.chip.active');
-                if (activo) {
-                    activo.scrollIntoView({
-                        behavior: 'instant',
-                        inline: 'center',
-                        block: 'nearest'
-                    });
-                }
-
-            }, 100); // 👈 clave
-
-            // 🔥 GUARDAR SCROLL
-            contenedor.addEventListener('scroll', function() {
-                sessionStorage.setItem('scrollEdificios', contenedor.scrollLeft);
-            });
+            if (activo) {
+                activo.scrollIntoView({
+                    behavior: 'auto',
+                    inline: 'center',
+                    block: 'nearest'
+                });
+            }
 
         });
     </script>
