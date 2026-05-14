@@ -44,8 +44,8 @@ class CheckoutController extends Controller
     {
         $query = Checkout::with(['edificio', 'tecnico', 'detalles'])->where('estado', 'finalizado');
 
-        if ($request->filled('edificio')) {
-            $query->where('edificio_id', $request->edificio);
+        if ($request->filled('edificio_id')) {
+            $query->where('edificio_id', $request->edificio_id);
         }
 
         $checkouts = $query->get();
