@@ -31,6 +31,13 @@ class CheckoutController extends Controller
         if ($request->filled('edificio_id')) {
             $query->where('edificio_id', $request->edificio_id);
         }
+        // 📅 FILTRO MES
+        if ($request->filled('mes')) {
+
+            $mes = str_pad($request->mes, 2, '0', STR_PAD_LEFT);
+
+            $query->whereRaw("DATE_FORMAT(fecha_inicio, '%m') = ?", [$mes]);
+        }
 
         $checkouts = $query->get();
 
@@ -46,6 +53,14 @@ class CheckoutController extends Controller
 
         if ($request->filled('edificio_id')) {
             $query->where('edificio_id', $request->edificio_id);
+        }
+
+        // 📅 FILTRO MES
+        if ($request->filled('mes')) {
+
+            $mes = str_pad($request->mes, 2, '0', STR_PAD_LEFT);
+
+            $query->whereRaw("DATE_FORMAT(fecha_inicio, '%m') = ?", [$mes]);
         }
 
         $checkouts = $query->get();
