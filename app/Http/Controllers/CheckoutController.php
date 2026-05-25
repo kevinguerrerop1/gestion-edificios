@@ -15,60 +15,67 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        /*$checkouts = Checkout::with(['edificio', 'detalles'])
-            ->latest()
-            ->get();
+        // 📅 Si no viene mes seleccionado, usar mes actual
+        $mesSeleccionado = $request->mes ?? now()->month;
 
-        return view('checkouts.index', compact('checkouts'));
-        $checkouts = Checkout::with(['edificio', 'tecnico', 'detalles'])
-            ->where('estado', '!=', 'finalizado') // 🔥 ESTA ES LA CLAVE
-            ->get();
+        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])
+            ->where('estado', '!=', 'finalizado');
 
-        return view('checkouts.index', compact('checkouts'));*/
-
-        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])->where('estado', '!=', 'finalizado');
-
+        // 🏢 FILTRO EDIFICIO
         if ($request->filled('edificio_id')) {
             $query->where('edificio_id', $request->edificio_id);
         }
-        // 📅 FILTRO MES
-        if ($request->filled('mes')) {
 
-            $mes = str_pad($request->mes, 2, '0', STR_PAD_LEFT);
+        // 📅 FILTRO MES
+        if ($mesSeleccionado) {
+
+            $mes = str_pad($mesSeleccionado, 2, '0', STR_PAD_LEFT);
 
             $query->whereRaw("DATE_FORMAT(fecha_inicio, '%m') = ?", [$mes]);
         }
 
         $checkouts = $query->get();
 
-        // Orden en el filtro de edificios
+        // 🏢 EDIFICIOS
         $edificios = Edificio::orderBy('nombre')->get();
 
-        return view('checkouts.index', compact('checkouts', 'edificios'));
+        return view('checkouts.index', compact(
+            'checkouts',
+            'edificios',
+            'mesSeleccionado'
+        ));
     }
-
     public function cerrados(Request $request)
     {
-        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])->where('estado', 'finalizado');
+        // 📅 MES ACTUAL POR DEFECTO
+        $mesSeleccionado = $request->mes ?? now()->month;
 
+        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])
+            ->where('estado', 'finalizado');
+
+        // 🏢 FILTRO EDIFICIO
         if ($request->filled('edificio_id')) {
             $query->where('edificio_id', $request->edificio_id);
         }
 
         // 📅 FILTRO MES
-        if ($request->filled('mes')) {
+        if ($mesSeleccionado != 'todos') {
 
-            $mes = str_pad($request->mes, 2, '0', STR_PAD_LEFT);
+            $mes = str_pad($mesSeleccionado, 2, '0', STR_PAD_LEFT);
 
             $query->whereRaw("DATE_FORMAT(fecha_inicio, '%m') = ?", [$mes]);
         }
 
         $checkouts = $query->get();
 
-        // Orden en el filtro de edificios
+        // 🏢 EDIFICIOS
         $edificios = Edificio::orderBy('nombre')->get();
 
-        return view('checkouts.cerrados', compact('checkouts', 'edificios'));
+        return view('checkouts.cerrados', compact(
+            'checkouts',
+            'edificios',
+            'mesSeleccionado'
+        ));
     }
 
     public function create()
