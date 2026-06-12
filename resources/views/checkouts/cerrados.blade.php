@@ -192,7 +192,7 @@
                     <th>Monto Neto</th>
                     <th>PDF</th>
                     <th>Estado</th>
-                    <th>OC</th>
+                    <th>Observaciones</th>
                     <th>Factura</th>
                     <th>Acciones</th>
                 </tr>
@@ -303,23 +303,32 @@
 
                         </td>
                         {{-- 🔵 OC --}}
-                        <td class="text-center">
+                        <td>
+                            @php
+                                $ultimaObs = $c->observaciones
+                                    ->sortByDesc('created_at')
+                                    ->first();
+                            @endphp
 
-                            @if ($c->nro_oc)
-                                <div class="fw-semibold">{{ $c->nro_oc }}</div>
-                            @endif
+                            @if($ultimaObs)
 
-                            @if ($c->pdf_oc)
-                                <a href="{{ asset('checkout/' . $c->pdf_oc) }}" target="_blank"
-                                    class="btn btn-sm btn-outline-primary mt-1 w-100">
-                                    📄 Ver OC
-                                </a>
-                            @endif
+                                <div class="small">
+                                    <div class="fw-semibold">
+                                        {{ $ultimaObs->observacion }}
+                                    </div>
 
-                            @if (!$c->nro_oc && !$c->pdf_oc)
+                                    <div class="text-muted">
+                                        📅 {{ \Carbon\Carbon::parse($ultimaObs->created_at)->format('d-m-Y') }}
+                                        <br>
+                                        🕒 {{ \Carbon\Carbon::parse($ultimaObs->created_at)->format('H:i') }}
+                                    </div>
+                                </div>
+
+                            @else
+
                                 <span class="text-muted">—</span>
-                            @endif
 
+                            @endif
                         </td>
 
                         {{-- 🟢 FACTURA --}}

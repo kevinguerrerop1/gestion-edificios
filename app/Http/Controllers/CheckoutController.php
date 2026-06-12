@@ -18,8 +18,11 @@ class CheckoutController extends Controller
         // 📅 Si no viene mes seleccionado, usar mes actual
         $mesSeleccionado = $request->mes ?? now()->month;
 
-        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])
-            ->where('estado', '!=', 'finalizado');
+        $query = Checkout::with([
+            'edificio',
+            'tecnico',
+            'detalles'
+        ])->where('estado', '!=', 'finalizado');
 
         // 🏢 FILTRO EDIFICIO
         if ($request->filled('edificio_id')) {
@@ -50,7 +53,11 @@ class CheckoutController extends Controller
         // 📅 MES ACTUAL POR DEFECTO
         $mesSeleccionado = $request->mes ?? now()->month;
 
-        $query = Checkout::with(['edificio', 'tecnico', 'detalles'])
+        $query = Checkout::with([
+            'edificio',
+            'tecnico',
+            'detalles'
+        ])
             ->where('estado', 'finalizado');
 
         // 🏢 FILTRO EDIFICIO
