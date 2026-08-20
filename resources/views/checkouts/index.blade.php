@@ -51,13 +51,14 @@
         }
     </style>
 
-    <div class="container-fluid py-4">
+    {{-- Contenedor centrado y proporcionado --}}
+    <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="d-flex align-items-center">
                 <i class="bi bi-clipboard-check fs-3 me-2 text-primary"></i>
                 <div>
                     <h4 class="mb-0 fw-bold">Listado de Check-Outs</h4>
-                    <small class="text-muted">Gestión integral de check-outs registrados</small>
+                    <small class="text-muted">Gestión de check-outs registrados</small>
                 </div>
             </div>
             <a href="{{ route('checkouts.create') }}" class="btn btn-success">
@@ -132,20 +133,43 @@
             <div class="filtro-scroll" id="listaEdificios">
                 <div class="mb-3">
                     <div class="d-flex overflow-auto pb-2" id="scrollEdificios">
+                        {{-- BOTÓN TODOS CUADRADO IGUAL AL DE MESES --}}
                         <a href="{{ request()->fullUrlWithQuery(['edificio_id' => null]) }}"
-                            class="btn btn-sm me-2 flex-shrink-0 {{ request('edificio_id') ? 'btn-outline-secondary' : 'btn-dark' }}">
+                            class="btn btn-sm me-2 flex-shrink-0 {{ request('edificio_id') ? 'btn-outline-dark' : 'btn-dark' }}">
                             Todos
                         </a>
 
+                        {{-- CHIPS DE EDIFICIOS --}}
                         @foreach ($edificios as $e)
                             @php
                                 $activo = request('edificio_id') == $e->id;
                                 $color = $e->color ?? '#6c757d';
+
+                                // Cálculo de contraste de luminosidad (YIQ) para color de texto
+                                $hex = ltrim($color, '#');
+                                if (strlen($hex) == 3) {
+                                    $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+                                }
+                                $r = hexdec(substr($hex, 0, 2));
+                                $g = hexdec(substr($hex, 2, 2));
+                                $b = hexdec(substr($hex, 4, 2));
+                                $yiq = ($r * 299 + $g * 587 + $b * 114) / 1000;
+
+                                $textColor = $yiq >= 150 ? '#111827' : '#ffffff';
                             @endphp
 
                             <a href="{{ request()->fullUrlWithQuery(['edificio_id' => $e->id]) }}"
                                 class="btn btn-sm me-2 flex-shrink-0 {{ $activo ? 'activo' : '' }}"
-                                style="background-color: {{ $activo ? $color : 'transparent' }}; border: 2px solid {{ $color }}; color: {{ $activo ? '#fff' : $color }};">
+                                style="
+                            background-color: {{ $color }};
+                            border: 2px solid {{ $activo ? '#000000' : $color }};
+                            color: {{ $textColor }};
+                            border-radius: 20px;
+                            font-weight: {{ $activo ? 'bold' : '500' }};
+                            box-shadow: {{ $activo ? '0 0 0 3px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15)' : '0 1px 3px rgba(0,0,0,0.1)' }};
+                            opacity: {{ request('edificio_id') && !$activo ? '0.55' : '1' }};
+                            transition: all 0.2s ease;
+                        ">
                                 {{ $e->nombre }}
                             </a>
                         @endforeach
@@ -154,23 +178,23 @@
             </div>
         </div>
 
-        {{-- TABLA PRINCIPAL --}}
+        {{-- TABLA CON ANCHOS CONTROLADOS --}}
         <table class="table table-bordered table-hover align-middle w-100" id="tabla">
             <thead class="table-dark text-center">
                 <tr>
-                    <th>#</th>
-                    <th>Edificio</th>
-                    <th>Técnico</th>
-                    <th>Dpto.</th>
-                    <th>Inicio</th>
-                    <th>Término</th>
-                    <th>Monto Neto</th>
-                    <th>Cotizaciones</th>
-                    <th>PDF</th>
-                    <th>Estado</th>
-                    <th>Observaciones</th>
-                    <th>Factura</th>
-                    <th>Acciones</th>
+                    <th style="width: 4%;">#</th>
+                    <th style="width: 14%;">Edificio</th>
+                    <th style="width: 13%;">Técnico</th>
+                    <th style="width: 5%;">Dpto.</th>
+                    <th style="width: 8%;">Inicio</th>
+                    <th style="width: 8%;">Término</th>
+                    <th style="width: 8%;">Monto Neto</th>
+                    <th style="width: 8%;">Cotizaciones</th>
+                    <th style="width: 5%;">PDF</th>
+                    <th style="width: 10%;">Estado</th>
+                    <th style="width: 10%;">Observaciones</th>
+                    <th style="width: 7%;">Factura</th>
+                    <th style="width: 8%;">Acciones</th>
                 </tr>
             </thead>
 
@@ -193,30 +217,23 @@
                         {{-- COLUMNA COTIZACIONES --}}
                         <td class="text-center">
                             @if ($c->cotizaciones && $c->cotizaciones->count() > 0)
-                                <div class="d-flex flex-column gap-1 align-items-center mb-1">
-                                    @foreach ($c->cotizaciones as $cot)
-                                        <span
-                                            class="badge {{ $cot->estado == 'autorizada' ? 'bg-success' : 'bg-warning text-dark' }}"
-                                            style="font-size: 11px;">
-                                            #{{ $cot->numero_cotizacion }} ({{ ucfirst($cot->estado) }})
-                                        </span>
-                                    @endforeach
+                                <div class="d-flex justify-content-center align-items-center gap-1">
+                                    <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 fw-semibold"
+                                        data-bs-toggle="modal" data-bs-target="#modalCotizaciones{{ $c->id }}"
+                                        title="Ver cotizaciones">
+                                        📑 {{ $c->cotizaciones->count() }}
+                                    </button>
+                                    <a href="{{ route('checkouts.cotizaciones.create', $c->id) }}"
+                                        class="btn btn-sm btn-outline-success py-0 px-1" title="Nueva cotización">
+                                        ➕
+                                    </a>
                                 </div>
                             @else
-                                <span class="text-muted small d-block mb-1">— Sin cotizaciones —</span>
-                            @endif
-
-                            <div class="btn-group btn-group-sm">
-                                <button type="button" class="btn btn-outline-primary btn-sm py-0 px-2"
-                                    data-bs-toggle="modal" data-bs-target="#modalCotizaciones{{ $c->id }}"
-                                    title="Ver cotizaciones">
-                                    👁 Ver ({{ $c->cotizaciones ? $c->cotizaciones->count() : 0 }})
-                                </button>
                                 <a href="{{ route('checkouts.cotizaciones.create', $c->id) }}"
-                                    class="btn btn-success btn-sm py-0 px-2" title="Crear nueva cotización">
-                                    ➕ Crear
+                                    class="btn btn-sm btn-outline-secondary py-0 px-2 text-nowrap" style="font-size: 11px;">
+                                    ➕ Cotizar
                                 </a>
-                            </div>
+                            @endif
                         </td>
 
                         {{-- PDFS CHECKOUT --}}
@@ -240,7 +257,7 @@
                             </div>
                         </td>
 
-                        {{-- ESTADO CHECKOUT --}}
+                        {{-- ESTADO --}}
                         <td class="text-center">
                             @php
                                 switch ($c->estado) {
@@ -284,10 +301,12 @@
                             @php $ultimaObs = $c->observaciones->sortByDesc('created_at')->first(); @endphp
                             @if ($ultimaObs)
                                 <div class="small">
-                                    <div class="fw-semibold">{{ $ultimaObs->observacion }}</div>
-                                    <div class="text-muted">
-                                        📅 {{ \Carbon\Carbon::parse($ultimaObs->created_at)->format('d-m-Y') }}<br>
-                                        🕒 {{ \Carbon\Carbon::parse($ultimaObs->created_at)->format('H:i') }}
+                                    <div class="fw-semibold text-truncate" style="max-width: 140px;"
+                                        title="{{ $ultimaObs->observacion }}">
+                                        {{ $ultimaObs->observacion }}
+                                    </div>
+                                    <div class="text-muted" style="font-size: 11px;">
+                                        📅 {{ \Carbon\Carbon::parse($ultimaObs->created_at)->format('d-m-Y') }}
                                     </div>
                                 </div>
                             @else
@@ -298,12 +317,12 @@
                         {{-- FACTURA --}}
                         <td class="text-center">
                             @if ($c->nro_factura)
-                                <div class="fw-semibold">{{ $c->nro_factura }}</div>
+                                <div class="fw-semibold small">{{ $c->nro_factura }}</div>
                             @endif
                             @if ($c->pdf_factura)
                                 <a href="{{ asset('checkout/' . $c->pdf_factura) }}" target="_blank"
-                                    class="btn btn-sm btn-outline-success mt-1 w-100">
-                                    🧾 Ver Factura
+                                    class="btn btn-sm btn-outline-success mt-1 w-100 py-0" style="font-size: 11px;">
+                                    🧾 Factura
                                 </a>
                             @endif
                             @if (!$c->nro_factura && !$c->pdf_factura)
@@ -314,22 +333,30 @@
                         {{-- ACCIONES --}}
                         <td class="text-center">
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                    data-bs-toggle="dropdown">
                                     Acciones
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('checkouts.show', $c->id) }}">👁 Ver
-                                            Check-Out</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('checkouts.edit', $c->id) }}">✏️ Editar
-                                            Check-Out</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('checkouts.show', $c->id) }}">👁 Ver</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('checkouts.edit', $c->id) }}">✏️
+                                            Editar</a></li>
                                     <li><a class="dropdown-item" href="{{ route('checkouts.historial', $c->id) }}">💬
                                             Historial</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                     <li><a class="dropdown-item"
                                             href="{{ route('checkouts.cotizaciones.create', $c->id) }}">➕ Nueva
                                             Cotización</a></li>
                                     <li><button class="dropdown-item" data-bs-toggle="modal"
                                             data-bs-target="#modalCotizaciones{{ $c->id }}">📑 Ver Cotizaciones
-                                            ({{ $c->cotizaciones ? $c->cotizaciones->count() : 0 }})</button></li>
+                                            ({{ $c->cotizaciones ? $c->cotizaciones->count() : 0 }})
+                                        </button></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                     <li><button class="dropdown-item" data-bs-toggle="modal"
                                             data-bs-target="#modalDocs{{ $c->id }}">📄 OC/Factura</button></li>
                                     <li>
@@ -351,11 +378,9 @@
         </table>
     </div>
 
-    {{-- ========================================================================= --}}
-    {{-- MODALES: COLOCADOS ESTRICTAMENTE FUERA DE LA TABLA PARA NO ROMPER EL DOM --}}
-    {{-- ========================================================================= --}}
+    {{-- MODALES FUERA DE LA TABLA --}}
     @foreach ($checkouts as $c)
-        <!-- Modal Ver / Gestionar Cotizaciones -->
+        <!-- Modal Cotizaciones -->
         <div class="modal fade" id="modalCotizaciones{{ $c->id }}" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -368,10 +393,10 @@
                     </div>
                     <div class="modal-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-muted">Listado de cotizaciones emitidas para este check-out</span>
+                            <span class="text-muted">Listado de cotizaciones asociadas a este check-out</span>
                             <a href="{{ route('checkouts.cotizaciones.create', $c->id) }}"
                                 class="btn btn-sm btn-success">
-                                ➕ Crear Nueva Cotización
+                                ➕ Emitir Nueva Cotización
                             </a>
                         </div>
 
@@ -406,7 +431,6 @@
                                             class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}"
                                             data-bs-parent="#accordionCotizaciones{{ $c->id }}">
                                             <div class="accordion-body">
-                                                {{-- Info Cabecera --}}
                                                 <div class="row g-2 mb-3 bg-light p-2 rounded small">
                                                     <div class="col-md-3"><strong>Cliente:</strong>
                                                         {{ $cot->cliente_nombre ?? ($c->edificio->nombre ?? '-') }}</div>
@@ -418,7 +442,6 @@
                                                     </div>
                                                 </div>
 
-                                                {{-- Detalle Ítems --}}
                                                 <div class="table-responsive mb-3">
                                                     <table class="table table-sm table-bordered align-middle">
                                                         <thead class="table-secondary text-center">
@@ -467,7 +490,6 @@
                                                     </table>
                                                 </div>
 
-                                                {{-- Opciones / Acciones de la Cotización --}}
                                                 <div
                                                     class="d-flex justify-content-between align-items-center pt-2 border-top">
                                                     <div class="d-flex align-items-center gap-2">
