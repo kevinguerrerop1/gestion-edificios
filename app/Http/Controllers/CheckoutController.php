@@ -10,6 +10,8 @@ use App\Models\Tecnicos;
 use App\Models\CheckoutObservacion;
 use App\Models\Checkout_detalles;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\CheckoutCotizacion;
+use App\Models\CheckoutCotizacionDetalle;
 
 class CheckoutController extends Controller
 {
@@ -333,5 +335,111 @@ class CheckoutController extends Controller
         $pdf = Pdf::loadView('checkouts.pdf', compact('checkout'));
 
         return $pdf->download('checkout_' . $checkout->id . '.pdf');
+    }
+
+    // =========================================================================
+    // 📑 MÉTODOS DE COTIZACIONES
+    // =========================================================================
+
+    public function createCotizacion($id)
+    {
+        $checkout = Checkout::with(['edificio'])->findOrFail($id);
+
+        // 1. Obtener la última cotización registrada en el sistema
+        $ultimaCotizacion = CheckoutCotizacion::orderBy('id', 'desc')->first();
+
+        if ($ultimaCotizacion && preg_match('/\d+/', $ultimaCotizacion->numero_cotizacion, $matches)) {
+            // Extrae los números del folio (ej. 161) y le suma 1 (162)
+            $siguienteNumero = (int) $matches[0] + 1;
+        } else {
+            // Si no hay ninguna cotización previa, arranca en 1
+            $siguienteNumero = 1;
+        }
+
+        // 2. Formatear con ceros a la izquierda (ej. COT-RV-0162)
+        $siguienteCorrelativo = 'COT-RV-' . str_pad($siguienteNumero, 4, '0', STR_PAD_LEFT);
+
+        return view('checkouts.cotizaciones.create', compact('checkout', 'siguienteCorrelativo'));
+    }
+
+    public function storeCotizacion(Request $request, $id)
+    {
+        $checkout = Checkout::findOrFail($id);
+
+        $request->validate([
+            'numero_cotizacion' => 'required|string|max:100',
+            'fecha' => 'required|date',
+            'items' => 'required|array|min:1',
+            'items.*.detalle' => 'required|string',
+            'items.*.valor_unitario' => 'required|numeric|min:0',
+            'items.*.unidades' => 'required|numeric|min:1',
+        ]);
+
+        $subtotal = 0;
+        foreach ($request->items as $item) {
+            $subtotal += ($item['valor_unitario'] * $item['unidades']);
+        }
+
+        $iva = (int) round($subtotal * 0.19);
+        $total = $subtotal + $iva;
+
+        $cotizacion = CheckoutCotizacion::create([
+            'checkout_id' => $checkout->id,
+            'numero_cotizacion' => $request->numero_cotizacion,
+            'fecha' => $request->fecha,
+            'cliente_nombre' => $request->cliente_nombre,
+            'contacto' => $request->contacto,
+            'email' => $request->email,
+            'telefono' => $request->telefono,
+            'departamento' => $request->departamento,
+            'subtotal' => $subtotal,
+            'iva' => $iva,
+            'total' => $total,
+            'observaciones' => $request->observaciones,
+            'estado' => 'pendiente',
+        ]);
+
+        foreach ($request->items as $item) {
+            CheckoutCotizacionDetalle::create([
+                'checkout_cotizacion_id' => $cotizacion->id,
+                'detalle_servicio' => $item['detalle'],
+                'valor_unitario' => $item['valor_unitario'],
+                'unidades' => $item['unidades'],
+                'total_linea' => ($item['valor_unitario'] * $item['unidades']),
+            ]);
+        }
+
+        return redirect()->route('checkouts.index')->with('success', 'Cotización ' . $cotizacion->numero_cotizacion . ' creada exitosamente.');
+    }
+
+    public function cambiarEstadoCotizacion(Request $request, $id)
+    {
+        $request->validate([
+            'estado' => 'required|in:pendiente,autorizada',
+        ]);
+
+        $cotizacion = CheckoutCotizacion::findOrFail($id);
+        $cotizacion->estado = $request->estado;
+        $cotizacion->save();
+
+        return back()->with('success', 'Estado de la cotización actualizado.');
+    }
+
+    public function eliminarCotizacion($id)
+    {
+        $cotizacion = CheckoutCotizacion::findOrFail($id);
+        $cotizacion->delete();
+
+        return back()->with('success', 'Cotización eliminada correctamente.');
+    }
+
+    public function pdfCotizacion($id)
+    {
+        $cotizacion = CheckoutCotizacion::with(['detalles', 'checkout.edificio'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('checkouts.cotizaciones.pdf', compact('cotizacion'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download('Cotizacion_' . $cotizacion->numero_cotizacion . '.pdf');
     }
 }

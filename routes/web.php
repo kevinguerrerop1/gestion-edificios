@@ -88,7 +88,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
 
-
+    Route::get('checkouts/{id}/cotizaciones/create', [CheckoutController::class, 'createCotizacion'])->name('checkouts.cotizaciones.create');
+    Route::post('checkouts/{id}/cotizaciones/store', [CheckoutController::class, 'storeCotizacion'])->name('checkouts.cotizaciones.store');
+    Route::post('checkouts/cotizaciones/{id}/estado', [CheckoutController::class, 'cambiarEstadoCotizacion'])->name('checkouts.cotizaciones.estado');
+    Route::delete('checkouts/cotizaciones/{id}', [CheckoutController::class, 'eliminarCotizacion'])->name('checkouts.cotizaciones.destroy');
+    Route::get('cotizaciones/{id}/pdf', [CheckoutController::class, 'pdfCotizacion'])->name('checkouts.cotizaciones.pdf');
 
     Route::get('checkouts/create', [CheckoutController::class, 'create'])->name('checkouts.create');
     Route::post('checkouts', [CheckoutController::class, 'store'])->name('checkouts.store');

@@ -47,13 +47,13 @@ class Checkout extends Model
         return $this->belongsTo(Edificio::class);
     }
 
-    /*public function observaciones()
-    {
-        return $this->hasMany(CheckoutObservacion::class);
-    }*/
-
     public function observaciones()
     {
         return $this->hasMany(CheckoutObservacion::class, 'checkout_id');
+    }
+
+    public function cotizaciones()
+    {
+        return $this->hasMany(CheckoutCotizacion::class, 'checkout_id');
     }
 }
