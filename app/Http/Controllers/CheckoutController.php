@@ -442,4 +442,9 @@ class CheckoutController extends Controller
 
         return $pdf->download('Cotizacion_' . $cotizacion->numero_cotizacion . '.pdf');
     }
+
+    public function generadorFirmas()
+    {
+        return view('firmas.index');
+    }
 }

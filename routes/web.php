@@ -35,6 +35,8 @@ Route::get('gestiones/nueva/{edificio}', [GestionesController::class, 'nueva'])-
 Route::get('edificios/{id}/qr', [EdificioController::class, 'qr'])->name('edificios.qr');
 Route::get('/edificios/{id}/qr/pdf', [EdificioController::class, 'qrPdf'])->name('edificios.qr.imprimir');
 
+Route::get('/firmas', [App\Http\Controllers\CheckoutController::class, 'generadorFirmas'])->name('firmas.index');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');
