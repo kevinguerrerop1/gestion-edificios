@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Checkout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 use App\Models\Edificio;
 use App\Models\Articulos;
 use App\Models\Tecnicos;
@@ -17,7 +19,7 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        // 📅 Si no viene mes seleccionado, usar mes actual
+        //Si no viene mes seleccionado, usar mes actual
         $mesSeleccionado = $request->mes ?? now()->month;
 
         $query = Checkout::with([
@@ -26,12 +28,12 @@ class CheckoutController extends Controller
             'detalles'
         ])->where('estado', '!=', 'finalizado');
 
-        // 🏢 FILTRO EDIFICIO
+        //FILTRO EDIFICIO
         if ($request->filled('edificio_id')) {
             $query->where('edificio_id', $request->edificio_id);
         }
 
-        // 📅 FILTRO MES
+        //FILTRO MES
         if ($mesSeleccionado) {
 
             $mes = str_pad($mesSeleccionado, 2, '0', STR_PAD_LEFT);
@@ -41,7 +43,7 @@ class CheckoutController extends Controller
 
         $checkouts = $query->get();
 
-        // 🏢 EDIFICIOS
+        //EDIFICIOS
         $edificios = Edificio::orderBy('nombre')->get();
 
         return view('checkouts.index', compact(
@@ -52,7 +54,7 @@ class CheckoutController extends Controller
     }
     public function cerrados(Request $request)
     {
-        // 📅 MES ACTUAL POR DEFECTO
+        //MES ACTUAL POR DEFECTO
         $mesSeleccionado = $request->mes ?? now()->month;
 
         $query = Checkout::with([
@@ -62,12 +64,12 @@ class CheckoutController extends Controller
         ])
             ->where('estado', 'finalizado');
 
-        // 🏢 FILTRO EDIFICIO
+        //FILTRO EDIFICIO
         if ($request->filled('edificio_id')) {
             $query->where('edificio_id', $request->edificio_id);
         }
 
-        // 📅 FILTRO MES
+        //FILTRO MES
         if ($mesSeleccionado != 'todos') {
 
             $mes = str_pad($mesSeleccionado, 2, '0', STR_PAD_LEFT);
@@ -77,7 +79,7 @@ class CheckoutController extends Controller
 
         $checkouts = $query->get();
 
-        // 🏢 EDIFICIOS
+        //EDIFICIOS
         $edificios = Edificio::orderBy('nombre')->get();
 
         return view('checkouts.cerrados', compact(
@@ -115,9 +117,29 @@ class CheckoutController extends Controller
             'estado' => 'pendiente',
         ]);
 
-        // 📄 PDFs
+        $checkout->loadMissing('edificio');
+
+        // Sanitizar datos para el nombre del archivo
+        $idEdificio = $checkout->id;
+        $nombreEdificio = Str::slug($checkout->edificio->nombre ?? 'sin_edificio', '_');
+        $dpto = Str::slug($checkout->bloque ?? '000', '_');
+
+        // Formato de fechas compacto (ej: 06082026 o 20260806)
+        $fechaInicio = $checkout->fecha_inicio ? Carbon::parse($checkout->fecha_inicio)->format('dmY') : 'sin_inicio';
+        $fechaTermino = $checkout->fecha_termino ? Carbon::parse($checkout->fecha_termino)->format('dmY') : 'sin_termino';
+
+        //PDF Solicitud
         if ($request->hasFile('pdf_solicitud')) {
-            $checkout->pdf_solicitud = $request->file('pdf_solicitud')->store('', 'public_direct');
+            $archivo = $request->file('pdf_solicitud');
+            $extension = $archivo->getClientOriginalExtension();
+
+            // Ejemplo: 226_edificio_aviador_acevedo_dpto_216_06082026_06082026.pdf
+            $nombreArchivo = "{$idEdificio}_{$nombreEdificio}_dpto_{$dpto}_{$fechaInicio}_{$fechaTermino}.{$extension}";
+
+            // Guardar con storeAs
+            $archivo->storeAs('', $nombreArchivo, 'public_direct');
+
+            $checkout->pdf_solicitud = $nombreArchivo;
         }
 
         if ($request->hasFile('pdf_entrega')) {
@@ -186,7 +208,7 @@ class CheckoutController extends Controller
             'monto_neto' => $request->monto_neto,
         ]);
 
-        // 📄 PDFs (reemplazo opcional)
+        //PDFs (reemplazo opcional)
         if ($request->hasFile('pdf_solicitud')) {
             $checkout->pdf_solicitud = $request->file('pdf_solicitud')->store('', 'public_direct');
         }
@@ -338,7 +360,7 @@ class CheckoutController extends Controller
     }
 
     // =========================================================================
-    // 📑 MÉTODOS DE COTIZACIONES
+    // MÉTODOS DE COTIZACIONES
     // =========================================================================
 
     public function createCotizacion($id)
