@@ -469,4 +469,35 @@ class CheckoutController extends Controller
     {
         return view('firmas.index');
     }
+
+    public function subirTerreno(Request $request, $id)
+    {
+        $request->validate([
+            'pdf_terreno' => 'required|mimes:pdf|max:20480', // Máx 20MB
+        ]);
+
+        $checkout = Checkout::with('edificio')->findOrFail($id);
+
+        if ($request->hasFile('pdf_terreno')) {
+            $archivo = $request->file('pdf_terreno');
+            $ext = $archivo->getClientOriginalExtension();
+
+            $idEdificio = $checkout->id;
+            $nombreEdificio = Str::slug($checkout->edificio->nombre ?? 'sin_edificio', '_');
+            $dpto = Str::slug($checkout->bloque ?? '000', '_');
+            $fechaInicio = $checkout->fecha_inicio ? Carbon::parse($checkout->fecha_inicio)->format('dmY') : 'sin_inicio';
+            $fechaTermino = $checkout->fecha_termino ? Carbon::parse($checkout->fecha_termino)->format('dmY') : 'sin_termino';
+
+            // Nombre limpio: terreno_226_edificio_aviador_acevedo_dpto_216_06082026_06082026.pdf
+            $nombreArchivo = "terreno_{$idEdificio}_{$nombreEdificio}_dpto_{$dpto}_{$fechaInicio}_{$fechaTermino}.{$ext}";
+
+            // Subir a la carpeta pública
+            $archivo->storeAs('', $nombreArchivo, 'public_direct');
+
+            $checkout->pdf_terreno = $nombreArchivo;
+            $checkout->save();
+        }
+
+        return back()->with('success', 'PDF de terreno subido correctamente.');
+    }
 }

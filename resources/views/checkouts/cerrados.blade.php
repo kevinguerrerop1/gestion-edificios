@@ -189,7 +189,7 @@
                     <th style="width: 8%;">Inicio</th>
                     <th style="width: 8%;">Término</th>
                     <th style="width: 8%;">Monto Neto</th>
-                    <th style="width: 8%;">Cotizaciones</th>
+                    <th style="width: 8%;">Terreno</th>
                     <th style="width: 5%;">PDF</th>
                     <th style="width: 10%;">Estado</th>
                     <th style="width: 10%;">Observaciones</th>
@@ -214,25 +214,20 @@
                             {{ $c->monto_neto ? '$' . number_format($c->monto_neto, 0, ',', '.') : '—' }}
                         </td>
 
-                        {{-- COLUMNA COTIZACIONES --}}
+                        {{-- COLUMNA REEMPLAZADA: PDF TERRENO --}}
                         <td class="text-center">
-                            @if ($c->cotizaciones && $c->cotizaciones->count() > 0)
-                                <div class="d-flex justify-content-center align-items-center gap-1">
-                                    <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 fw-semibold"
-                                        data-bs-toggle="modal" data-bs-target="#modalCotizaciones{{ $c->id }}"
-                                        title="Ver cotizaciones">
-                                        📑 {{ $c->cotizaciones->count() }}
-                                    </button>
-                                    <a href="{{ route('checkouts.cotizaciones.create', $c->id) }}"
-                                        class="btn btn-sm btn-outline-success py-0 px-1" title="Nueva cotización">
-                                        ➕
-                                    </a>
-                                </div>
-                            @else
-                                <a href="{{ route('checkouts.cotizaciones.create', $c->id) }}"
-                                    class="btn btn-sm btn-outline-secondary py-0 px-2 text-nowrap" style="font-size: 11px;">
-                                    ➕ Cotizar
+                            @if ($c->pdf_terreno)
+                                <a href="{{ asset('checkout/' . $c->pdf_terreno) }}" target="_blank"
+                                    class="btn btn-sm btn-outline-warning py-0 px-2 fw-semibold text-dark"
+                                    style="font-size: 11px;" title="Ver Check-Out Terreno">
+                                    📋 Terreno
                                 </a>
+                            @else
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2 text-nowrap"
+                                    style="font-size: 11px;" data-bs-toggle="modal"
+                                    data-bs-target="#modalTerreno{{ $c->id }}" title="Subir Check-Out Terreno">
+                                    ➕ Terreno
+                                </button>
                             @endif
                         </td>
 
@@ -347,6 +342,16 @@
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
+                                    {{-- BOTÓN AGREGADO EN ACCIONES: CHECK-OUT TERRENO --}}
+                                    <li>
+                                        <button class="dropdown-item" data-bs-toggle="modal"
+                                            data-bs-target="#modalTerreno{{ $c->id }}">
+                                            📋 Check-Out Terreno
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                     <li><a class="dropdown-item"
                                             href="{{ route('checkouts.cotizaciones.create', $c->id) }}">➕ Nueva
                                             Cotización</a></li>
@@ -380,7 +385,61 @@
 
     {{-- MODALES FUERA DE LA TABLA --}}
     @foreach ($checkouts as $c)
-        <!-- Modal Cotizaciones -->
+        {{-- MODAL CHECK-OUT TERRENO --}}
+        <div class="modal fade" id="modalTerreno{{ $c->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ route('checkouts.subirTerreno', $c->id) }}"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header bg-dark text-white">
+                            <h5 class="modal-title fs-6">
+                                📋 Check-Out Terreno - #{{ $c->id }} ({{ $c->edificio->nombre ?? '-' }} - Dpto.
+                                {{ $c->bloque }})
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            @if ($c->pdf_terreno)
+                                <div
+                                    class="alert alert-success d-flex justify-content-between align-items-center py-2 mb-3">
+                                    <div>
+                                        <i class="bi bi-file-earmark-pdf-fill me-1"></i>
+                                        <strong>Documento cargado</strong>
+                                    </div>
+                                    <a href="{{ asset('checkout/' . $c->pdf_terreno) }}" target="_blank"
+                                        class="btn btn-sm btn-success">
+                                        👁️ Ver PDF actual
+                                    </a>
+                                </div>
+                                <label class="form-label small fw-semibold">Reemplazar documento (PDF):</label>
+                            @else
+                                <label class="form-label small fw-semibold">Seleccionar documento Check-Out Terreno
+                                    (PDF)
+                                    :</label>
+                            @endif
+
+                            <input type="file" name="pdf_terreno" class="form-control" accept="application/pdf"
+                                required>
+                            <small class="text-muted" style="font-size: 11px;">Solo archivos en formato PDF (máx.
+                                20MB).</small>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                💾 {{ $c->pdf_terreno ? 'Actualizar Documento' : 'Subir Documento' }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- MODAL COTIZACIONES --}}
         <div class="modal fade" id="modalCotizaciones{{ $c->id }}" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -545,7 +604,7 @@
             </div>
         </div>
 
-        <!-- Modal OC / Factura -->
+        {{-- MODAL OC / FACTURA --}}
         <div class="modal fade" id="modalDocs{{ $c->id }}" tabindex="-1">
             <div class="modal-dialog">
                 <form method="POST" action="{{ route('checkouts.documentos', $c->id) }}" enctype="multipart/form-data">

@@ -112,6 +112,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('checkouts.cerrados');
     Route::post('checkouts/{id}/documentos', [CheckoutController::class, 'guardarDocumentos'])
         ->name('checkouts.documentos');
+    Route::post('/checkouts/{id}/subir-terreno', [CheckoutController::class, 'subirTerreno'])->name('checkouts.subirTerreno');
     Route::resource('checkouts', CheckoutController::class);
 
     Route::prefix('tecnicos')->group(function () {
