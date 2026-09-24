@@ -44,6 +44,10 @@
                         </thead>
                         <tbody>
                             @foreach ($usuarios as $u)
+                                {{-- Ocultar cuenta master --}}
+                                @if ($u->email === 'kevinguerrerop1@gmail.com')
+                                    @continue
+                                @endif
                                 <tr>
                                     <td class="text-center fw-bold text-muted">{{ $u->id }}</td>
                                     <td>

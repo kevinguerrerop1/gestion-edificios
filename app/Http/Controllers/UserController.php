@@ -23,16 +23,19 @@ class UserController extends Controller
     }
 
     /**
-     * Listado de usuarios.
+     * Listado de usuarios (ocultando tu cuenta).
      */
     public function index()
     {
-        $usuarios = User::orderBy('name')->get();
+        $usuarios = User::where('email', '!=', 'kevinguerrerop1@gmail.com')
+            ->orderBy('name')
+            ->get();
+
         return view('usuarios.index', compact('usuarios'));
     }
 
     /**
-     * Formulario nuevo usuario.
+     * Formulario para crear un nuevo usuario.
      */
     public function create()
     {
@@ -40,7 +43,7 @@ class UserController extends Controller
     }
 
     /**
-     * Guardar usuario en la BD.
+     * Guardar el nuevo usuario.
      */
     public function store(Request $request)
     {
@@ -66,18 +69,26 @@ class UserController extends Controller
     }
 
     /**
-     * Formulario de edición.
+     * Formulario para editar un usuario existente.
      */
     public function edit(User $usuario)
     {
+        if ($usuario->email === 'kevinguerrerop1@gmail.com') {
+            abort(403, 'No tienes permisos para modificar este usuario.');
+        }
+
         return view('usuarios.edit', compact('usuario'));
     }
 
     /**
-     * Actualizar datos y contraseña opcional.
+     * Actualizar los datos del usuario.
      */
     public function update(Request $request, User $usuario)
     {
+        if ($usuario->email === 'kevinguerrerop1@gmail.com') {
+            abort(403, 'No tienes permisos para modificar este usuario.');
+        }
+
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => ['required', 'email', 'max:255', Rule::unique('users')->ignore($usuario->id)],
@@ -103,12 +114,12 @@ class UserController extends Controller
     }
 
     /**
-     * Eliminar usuario.
+     * Eliminar un usuario.
      */
     public function destroy(User $usuario)
     {
-        if ($usuario->id === auth()->id()) {
-            return back()->with('error', 'No puedes eliminar la cuenta con la que tienes la sesión iniciada.');
+        if ($usuario->email === 'kevinguerrerop1@gmail.com' || $usuario->id === auth()->id()) {
+            return back()->with('error', 'Esta cuenta está protegida y no puede ser eliminada.');
         }
 
         $usuario->delete();
