@@ -81,6 +81,15 @@
             background-color: #163a59 !important;
             border-color: #163a59 !important;
         }
+
+        /* Badge estilizado de rol */
+        .badge-rol {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
     </style>
 </head>
 
@@ -120,17 +129,20 @@
                                             </a>
                                         </li>
 
-                                        {{-- 🔥 NUEVA OPCIÓN --}}
                                         <li>
                                             <a class="dropdown-item" href="{{ route('checkouts.cerrados') }}">
                                                 <i class="bi bi-check-circle me-2 text-success"></i> Finalizados
                                             </a>
                                         </li>
-                                        <li>
-                                            <a href="{{ route('checkouts.papelera') }}" class="dropdown-item">
-                                                🗑 Papelera ({{ \App\Models\Checkout::onlyTrashed()->count() }})
-                                            </a>
-                                        </li>
+
+                                        {{-- Papelera solo para Administrador --}}
+                                        @if (Auth::user()->rol === 'admin')
+                                            <li>
+                                                <a href="{{ route('checkouts.papelera') }}" class="dropdown-item">
+                                                    🗑 Papelera ({{ \App\Models\Checkout::onlyTrashed()->count() }})
+                                                </a>
+                                            </li>
+                                        @endif
 
                                         <li>
                                             <hr class="dropdown-divider">
@@ -142,11 +154,13 @@
                                             </a>
                                         </li>
 
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('tecnicos.index') }}">
-                                                <i class="bi bi-person-gear me-2"></i> Técnicos
-                                            </a>
-                                        </li>
+                                        @if (Auth::user()->rol === 'admin')
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('tecnicos.index') }}">
+                                                    <i class="bi bi-person-gear me-2"></i> Técnicos
+                                                </a>
+                                            </li>
+                                        @endif
 
                                     </ul>
                                 </li>
@@ -173,12 +187,14 @@
                                     </a>
                                 </li>
 
-                                {{-- REPORTES --}}
-                                <li class="nav-item">
-                                    <a href="{{ route('reportes.index') }}" class="nav-link">
-                                        <i class="bi bi-bar-chart-line me-1"></i> Reportes
-                                    </a>
-                                </li>
+                                {{-- REPORTES (Solo Admin) --}}
+                                @if (Auth::user()->rol === 'admin')
+                                    <li class="nav-item">
+                                        <a href="{{ route('reportes.index') }}" class="nav-link">
+                                            <i class="bi bi-bar-chart-line me-1"></i> Reportes
+                                        </a>
+                                    </li>
+                                @endif
 
                             </ul>
                         @endauth
@@ -190,11 +206,26 @@
                                 </li>
                             @else
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                        {{ Auth::user()->name }}
+                                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
+                                        data-bs-toggle="dropdown">
+                                        <span>{{ Auth::user()->name }}</span>
+
+                                        {{-- ETIQUETA / BADGE DEL ROL AL LADO DEL NOMBRE --}}
+                                        @if (Auth::user()->rol === 'admin')
+                                            <span class="badge bg-warning text-dark border border-light badge-rol">
+                                                <i class="bi bi-shield-check me-1"></i>Admin
+                                            </span>
+                                        @else
+                                            <span class="badge bg-light text-dark badge-rol">
+                                                <i class="bi bi-person me-1"></i>Técnico
+                                            </span>
+                                        @endif
                                     </a>
 
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                        <li class="px-3 py-1 text-muted small border-bottom mb-1">
+                                            Rol: <strong>{{ ucfirst(Auth::user()->rol ?? 'tecnico') }}</strong>
+                                        </li>
                                         <li>
                                             <a class="dropdown-item text-danger" href="{{ route('logout') }}"
                                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
