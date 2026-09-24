@@ -43,6 +43,7 @@ Route::get('/edificios/{id}/qr/pdf', [EdificioController::class, 'qrPdf'])->name
 Route::get('/firmas', [App\Http\Controllers\CheckoutController::class, 'generadorFirmas'])->name('firmas.index');
 
 Route::middleware(['auth'])->group(function () {
+    Route::middleware(['role:admin'])->group(function () {});
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/gestiones/pendientes', [GestionesController::class, 'pendientes'])->name('gestiones.pendientes');
     Route::get('/gestiones/resueltas', [GestionesController::class, 'resueltas'])->name('gestiones.resueltas');
@@ -59,26 +60,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('edificios', EdificioController::class);
 
-    //Rutas de reportes
-    Route::get('/reportes/solicitudes-sin-visita', [ReporteController::class, 'solicitudesSinVisita'])->name('reportes.solicitudes_sin_visita');
-    Route::get('/reportes/gestiones-finalizadas', [ReporteController::class, 'gestionesFinalizadasPorEdificio'])->name('reportes.gestiones_finalizadas');
-    Route::get('/reportes/gestiones-finalizadas/pdf', [ReporteController::class, 'gestionesFinalizadasPorEdificioPdf'])->name('reportes.gestiones_finalizadas.pdf');
-    Route::get('/reportes/sin-visita/pdf', [ReporteController::class, 'sinVisitaPdf'])->name('reportes.sin-visita.pdf');
-    Route::get('/reportes/visitas-atrasadas', [ReporteController::class, 'visitasAtrasadas'])->name('reportes.visitas-atrasadas');
-    Route::get('/reportes/visitas-atrasadas/pdf', [ReporteController::class, 'visitasAtrasadasPdf'])->name('reportes.visitas-atrasadas.pdf');
-    Route::get('/reportes/historial-gestion', [ReporteController::class, 'historialGestion'])->name('reportes.historial_gestion');
-    Route::get('/reportes/historial-gestion/{gestion}/pdf', [ReporteController::class, 'historialGestionPdf'])->name('reportes.historial_gestion_pdf');
-    Route::get('/reportes/buscar-gestion', [ReporteController::class, 'buscarGestion'])->name('reportes.buscar_gestion');
-    Route::get('/reportes/maestro', [ReporteController::class, 'reporteMaestro'])->name('reportes.maestro');
-    Route::get('/reportes/maestro/pdf', [ReporteController::class, 'reporteMaestroPdf'])->name('reportes.maestro_pdf');
-    Route::get('/reportes/checkouts', [ReporteController::class, 'checkouts'])
-        ->name('reportes.checkouts');
-    Route::get('/reportes/checkouts/pdf', [ReporteController::class, 'checkoutsPdf'])
-        ->name('reportes.checkouts.pdf');
-    Route::get('/checkouts/{id}/pdf', [CheckoutController::class, 'pdf'])
-        ->name('checkouts.pdf');
-    Route::get('/reportes/checkouts/excel', [ReporteController::class, 'checkoutsExcel'])
-        ->name('reportes.checkouts.excel');
+
 
     Route::delete('/checkouts/{id}', [CheckoutController::class, 'destroy'])
         ->name('checkouts.destroy');
