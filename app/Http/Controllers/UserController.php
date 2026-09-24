@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
     /**
-     * Valida que solo el administrador pueda usar este mantenedor.
+     * Valida que solo el administrador pueda usar el mantenedor,
+     * excepto el cambio de clave propio al que puede entrar cualquier usuario autenticado.
      */
     public function __construct()
     {
@@ -19,7 +21,44 @@ class UserController extends Controller
                 abort(403, 'Acceso denegado: esta sección es exclusiva para el administrador.');
             }
             return $next($request);
-        });
+        })->except(['editPassword', 'updatePassword']);
+    }
+
+    public function editPassword()
+    {
+        return view('usuarios.password');
+    }
+
+    /**
+     * Procesar el cambio de la propia contraseña.
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required'],
+            'password'         => ['required', 'string', 'min:6', 'confirmed', 'different:current_password'],
+        ], [
+            'current_password.required' => 'Debes ingresar tu contraseña actual.',
+            'password.required'         => 'Debes ingresar una nueva contraseña.',
+            'password.min'              => 'La nueva contraseña debe tener al menos 6 caracteres.',
+            'password.confirmed'        => 'La confirmación de la nueva contraseña no coincide.',
+            'password.different'        => 'La nueva contraseña no puede ser idéntica a la actual.',
+        ]);
+
+        $user = User::find(Auth::id());
+
+        // Verificar que la clave actual sea correcta
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors([
+                'current_password' => 'La contraseña actual no es correcta.'
+            ])->withInput();
+        }
+
+        // Actualizar la contraseña
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', '¡Tu contraseña ha sido actualizada correctamente!');
     }
 
     /**

@@ -38,6 +38,10 @@ Auth::routes();
 Route::get('/firmas', [App\Http\Controllers\CheckoutController::class, 'generadorFirmas'])->name('firmas.index');
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/usuarios/cambiar-password', [UserController::class, 'editPassword'])->name('usuarios.password.edit');
+    Route::put('/usuarios/cambiar-password', [UserController::class, 'updatePassword'])->name('usuarios.password.update');
+
     Route::middleware(['role:admin'])->group(function () {
 
         Route::get('/gestiones/nueva', [GestionesController::class, 'nueva'])->name('gestiones.nueva');

@@ -233,6 +233,11 @@
                                             <strong>{{ Auth::user()->rol === 'admin' ? 'Administrador' : 'Supervisor(a)' }}</strong>
                                         </li>
                                         <li>
+                                            <a class="dropdown-item" href="{{ route('usuarios.password.edit') }}">
+                                                <i class="bi bi-key me-2 text-primary"></i> Cambiar contraseña
+                                            </a>
+                                        </li>
+                                        <li>
                                             <a class="dropdown-item text-danger" href="{{ route('logout') }}"
                                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                                 <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
@@ -240,7 +245,8 @@
                                         </li>
                                     </ul>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        class="d-none">
                                         @csrf
                                     </form>
                                 </li>
