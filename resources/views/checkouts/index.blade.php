@@ -181,27 +181,27 @@
         <table class="table table-bordered table-hover align-middle w-100" id="tabla">
             <thead class="table-dark text-center">
                 <tr>
-                    {{-- COLUMNAS BASE (VISIBLES PARA AMBOS ROLES) --}}
+                    {{-- COLUMNAS BASE --}}
                     <th style="{{ Auth::user()->rol === 'admin' ? 'width: 4%;' : 'width: 6%;' }}">#</th>
-                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 14%;' : 'width: 22%;' }}">Edificio</th>
-                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 13%;' : 'width: 20%;' }}">Técnico</th>
+                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 14%;' : 'width: 24%;' }}">Edificio</th>
+                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 13%;' : 'width: 22%;' }}">Técnico</th>
                     <th style="{{ Auth::user()->rol === 'admin' ? 'width: 5%;' : 'width: 8%;' }}">Dpto.</th>
-                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 8%;' : 'width: 12%;' }}">Inicio</th>
-                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 8%;' : 'width: 12%;' }}">Término</th>
+                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 8%;' : 'width: 14%;' }}">Inicio</th>
+                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 8%;' : 'width: 14%;' }}">Término</th>
 
-                    {{-- COLUMNAS EXCLUSIVAS DEL ADMINISTRADOR --}}
+                    {{-- MONTO NETO: SOLO ADMIN --}}
                     @if (Auth::user()->rol === 'admin')
                         <th style="width: 8%;">Monto Neto</th>
-                        <th style="width: 8%;">Terreno</th>
-                        <th style="width: 5%;">PDF</th>
-                        <th style="width: 10%;">Estado</th>
                     @endif
 
-                    {{-- OBSERVACIONES (VISIBLE PARA AMBOS ROLES) --}}
-                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 10%;' : 'width: 20%;' }}">Observaciones</th>
+                    {{-- TERRENO: VISIBLE PARA AMBOS (ADMIN Y TÉCNICO) --}}
+                    <th style="{{ Auth::user()->rol === 'admin' ? 'width: 8%;' : 'width: 12%;' }}">Terreno</th>
 
-                    {{-- FACTURA Y ACCIONES (SOLO ADMIN) --}}
+                    {{-- COLUMNAS EXCLUSIVAS DEL ADMIN --}}
                     @if (Auth::user()->rol === 'admin')
+                        <th style="width: 5%;">PDF</th>
+                        <th style="width: 10%;">Estado</th>
+                        <th style="width: 10%;">Observaciones</th>
                         <th style="width: 7%;">Factura</th>
                         <th style="width: 8%;">Acciones</th>
                     @endif
@@ -232,28 +232,33 @@
                         {{-- 6. TÉRMINO --}}
                         <td class="text-center">{{ \Carbon\Carbon::parse($c->fecha_termino)->format('d-m-Y') }}</td>
 
-                        {{-- BLOQUE PRIVADO ADMIN: MONTO, TERRENO, PDF, ESTADO --}}
+                        {{-- MONTO NETO: SOLO ADMIN --}}
                         @if (Auth::user()->rol === 'admin')
                             <td class="text-end fw-semibold text-success">
                                 {{ $c->monto_neto ? '$' . number_format($c->monto_neto, 0, ',', '.') : '—' }}
                             </td>
+                        @endif
 
-                            <td class="text-center">
-                                @if ($c->pdf_terreno)
-                                    <a href="{{ asset('checkout/' . $c->pdf_terreno) }}" target="_blank"
-                                        class="btn btn-sm btn-outline-warning py-0 px-2 fw-semibold text-dark"
-                                        style="font-size: 11px;" title="Ver Check-Out Terreno">
-                                        📋 Terreno
-                                    </a>
-                                @else
-                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2 text-nowrap"
-                                        style="font-size: 11px;" data-bs-toggle="modal"
-                                        data-bs-target="#modalTerreno{{ $c->id }}" title="Subir Check-Out Terreno">
-                                        ➕ Terreno
-                                    </button>
-                                @endif
-                            </td>
+                        {{-- 7. TERRENO: VISIBLE PARA ADMIN Y TÉCNICO --}}
+                        <td class="text-center">
+                            @if ($c->pdf_terreno)
+                                <a href="{{ asset('checkout/' . $c->pdf_terreno) }}" target="_blank"
+                                    class="btn btn-sm btn-outline-warning py-0 px-2 fw-semibold text-dark"
+                                    style="font-size: 11px;" title="Ver Check-Out Terreno">
+                                    📋 Terreno
+                                </a>
+                            @else
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2 text-nowrap"
+                                    style="font-size: 11px;" data-bs-toggle="modal"
+                                    data-bs-target="#modalTerreno{{ $c->id }}" title="Subir Check-Out Terreno">
+                                    ➕ Terreno
+                                </button>
+                            @endif
+                        </td>
 
+                        {{-- BLOQUE PRIVADO: SOLO ADMIN (PDF, ESTADO, OBSERVACIONES, FACTURA, ACCIONES) --}}
+                        @if (Auth::user()->rol === 'admin')
+                            {{-- PDFS CHECKOUT --}}
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
                                     @if ($c->pdf_solicitud)
@@ -274,6 +279,7 @@
                                 </div>
                             </td>
 
+                            {{-- ESTADO --}}
                             <td class="text-center">
                                 @php
                                     switch ($c->estado) {
@@ -311,28 +317,26 @@
                                     </select>
                                 </form>
                             </td>
-                        @endif
 
-                        {{-- 7. OBSERVACIONES --}}
-                        <td>
-                            @php $ultimaObs = $c->observaciones->sortByDesc('created_at')->first(); @endphp
-                            @if ($ultimaObs)
-                                <div class="small">
-                                    <div class="fw-semibold text-truncate" style="max-width: 170px;"
-                                        title="{{ $ultimaObs->observacion }}">
-                                        {{ $ultimaObs->observacion }}
+                            {{-- OBSERVACIONES (SOLO ADMIN) --}}
+                            <td>
+                                @php $ultimaObs = $c->observaciones->sortByDesc('created_at')->first(); @endphp
+                                @if ($ultimaObs)
+                                    <div class="small">
+                                        <div class="fw-semibold text-truncate" style="max-width: 170px;"
+                                            title="{{ $ultimaObs->observacion }}">
+                                            {{ $ultimaObs->observacion }}
+                                        </div>
+                                        <div class="text-muted" style="font-size: 11px;">
+                                            📅 {{ \Carbon\Carbon::parse($ultimaObs->created_at)->format('d-m-Y') }}
+                                        </div>
                                     </div>
-                                    <div class="text-muted" style="font-size: 11px;">
-                                        📅 {{ \Carbon\Carbon::parse($ultimaObs->created_at)->format('d-m-Y') }}
-                                    </div>
-                                </div>
-                            @else
-                                <span class="text-muted">—</span>
-                            @endif
-                        </td>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
 
-                        {{-- BLOQUE PRIVADO ADMIN: FACTURA Y ACCIONES --}}
-                        @if (Auth::user()->rol === 'admin')
+                            {{-- FACTURA --}}
                             <td class="text-center">
                                 @if ($c->nro_factura)
                                     <div class="fw-semibold small">{{ $c->nro_factura }}</div>
@@ -348,6 +352,7 @@
                                 @endif
                             </td>
 
+                            {{-- ACCIONES --}}
                             <td class="text-center">
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
@@ -405,63 +410,64 @@
         </table>
     </div>
 
-    {{-- MODALES RESERVADOS ÚNICAMENTE PARA EL ADMINISTRADOR --}}
+    {{-- MODAL CHECK-OUT TERRENO (DISPONIBLE PARA AMBOS ROLES) --}}
+    @foreach ($checkouts as $c)
+        <div class="modal fade" id="modalTerreno{{ $c->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ route('checkouts.subirTerreno', $c->id) }}"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header bg-dark text-white">
+                            <h5 class="modal-title fs-6">
+                                📋 Check-Out Terreno - #{{ $c->id }} ({{ $c->edificio->nombre ?? '-' }} - Dpto.
+                                {{ $c->bloque }})
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            @if ($c->pdf_terreno)
+                                <div
+                                    class="alert alert-success d-flex justify-content-between align-items-center py-2 mb-3">
+                                    <div>
+                                        <i class="bi bi-file-earmark-pdf-fill me-1"></i>
+                                        <strong>Documento cargado</strong>
+                                    </div>
+                                    <a href="{{ asset('checkout/' . $c->pdf_terreno) }}" target="_blank"
+                                        class="btn btn-sm btn-success">
+                                        👁️ Ver PDF actual
+                                    </a>
+                                </div>
+                                <label class="form-label small fw-semibold">Reemplazar documento (PDF):</label>
+                            @else
+                                <label class="form-label small fw-semibold">Seleccionar documento Check-Out Terreno
+                                    (PDF):</label>
+                            @endif
+
+                            <input type="file" name="pdf_terreno" class="form-control" accept="application/pdf"
+                                required>
+                            <small class="text-muted" style="font-size: 11px;">Solo archivos en formato PDF (máx.
+                                20MB).</small>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                💾 {{ $c->pdf_terreno ? 'Actualizar Documento' : 'Subir Documento' }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
+
+    {{-- MODALES EXCLUSIVOS PARA EL ADMINISTRADOR (COTIZACIONES Y DOCUMENTOS) --}}
     @if (Auth::user()->rol === 'admin')
         @foreach ($checkouts as $c)
-            {{-- MODAL CHECK-OUT TERRENO --}}
-            <div class="modal fade" id="modalTerreno{{ $c->id }}" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
-                    <form method="POST" action="{{ route('checkouts.subirTerreno', $c->id) }}"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <div class="modal-content">
-                            <div class="modal-header bg-dark text-white">
-                                <h5 class="modal-title fs-6">
-                                    📋 Check-Out Terreno - #{{ $c->id }} ({{ $c->edificio->nombre ?? '-' }} - Dpto.
-                                    {{ $c->bloque }})
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                    aria-label="Cerrar"></button>
-                            </div>
-
-                            <div class="modal-body">
-                                @if ($c->pdf_terreno)
-                                    <div
-                                        class="alert alert-success d-flex justify-content-between align-items-center py-2 mb-3">
-                                        <div>
-                                            <i class="bi bi-file-earmark-pdf-fill me-1"></i>
-                                            <strong>Documento cargado</strong>
-                                        </div>
-                                        <a href="{{ asset('checkout/' . $c->pdf_terreno) }}" target="_blank"
-                                            class="btn btn-sm btn-success">
-                                            👁️ Ver PDF actual
-                                        </a>
-                                    </div>
-                                    <label class="form-label small fw-semibold">Reemplazar documento (PDF):</label>
-                                @else
-                                    <label class="form-label small fw-semibold">Seleccionar documento Check-Out Terreno
-                                        (PDF)
-                                        :</label>
-                                @endif
-
-                                <input type="file" name="pdf_terreno" class="form-control" accept="application/pdf"
-                                    required>
-                                <small class="text-muted" style="font-size: 11px;">Solo archivos en formato PDF (máx.
-                                    20MB).</small>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary btn-sm"
-                                    data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    💾 {{ $c->pdf_terreno ? 'Actualizar Documento' : 'Subir Documento' }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             {{-- MODAL COTIZACIONES --}}
             <div class="modal fade" id="modalCotizaciones{{ $c->id }}" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-xl">

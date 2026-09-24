@@ -142,19 +142,14 @@
                                                     🗑 Papelera ({{ \App\Models\Checkout::onlyTrashed()->count() }})
                                                 </a>
                                             </li>
-                                        @endif
-
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('articulos.index') }}">
-                                                <i class="bi bi-tags me-2"></i> Artículos
-                                            </a>
-                                        </li>
-
-                                        @if (Auth::user()->rol === 'admin')
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('articulos.index') }}">
+                                                    <i class="bi bi-tags me-2"></i> Artículos
+                                                </a>
+                                            </li>
                                             <li>
                                                 <a class="dropdown-item" href="{{ route('tecnicos.index') }}">
                                                     <i class="bi bi-person-gear me-2"></i> Técnicos
@@ -162,33 +157,42 @@
                                             </li>
                                         @endif
 
+                                        @if (Auth::user()->rol === 'admin')
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('usuarios.index') }}">
+                                                    <i class="bi bi-people me-2 text-primary"></i> Mantenedor de Usuarios
+                                                </a>
+                                            </li>
+                                        @endif
+
                                     </ul>
                                 </li>
-
-                                {{-- GESTIÓN --}}
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                        <i class="bi bi-folder2-open me-1"></i> Gestión
-                                    </a>
-                                    <ul class="dropdown-menu shadow-sm">
-                                        <li><a class="dropdown-item" href="/gestiones"><i class="bi bi-list-ul me-2"></i>
-                                                Todas</a></li>
-                                        <li><a class="dropdown-item" href="/gestiones/pendientes"><i
-                                                    class="bi bi-hourglass-split me-2"></i> En proceso</a></li>
-                                        <li><a class="dropdown-item" href="/gestiones/resueltas"><i
-                                                    class="bi bi-check2-circle me-2"></i> Finalizadas</a></li>
-                                    </ul>
-                                </li>
-
-                                {{-- EDIFICIOS --}}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/edificios">
-                                        <i class="bi bi-building me-1"></i> Edificios
-                                    </a>
-                                </li>
-
-                                {{-- REPORTES (Solo Admin) --}}
                                 @if (Auth::user()->rol === 'admin')
+                                    {{-- GESTIÓN --}}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                            <i class="bi bi-folder2-open me-1"></i> Gestión
+                                        </a>
+                                        <ul class="dropdown-menu shadow-sm">
+                                            <li><a class="dropdown-item" href="/gestiones"><i
+                                                        class="bi bi-list-ul me-2"></i>
+                                                    Todas</a></li>
+                                            <li><a class="dropdown-item" href="/gestiones/pendientes"><i
+                                                        class="bi bi-hourglass-split me-2"></i> En proceso</a></li>
+                                            <li><a class="dropdown-item" href="/gestiones/resueltas"><i
+                                                        class="bi bi-check2-circle me-2"></i> Finalizadas</a></li>
+                                        </ul>
+                                    </li>
+
+                                    {{-- EDIFICIOS --}}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/edificios">
+                                            <i class="bi bi-building me-1"></i> Edificios
+                                        </a>
+                                    </li>
+
+                                    {{-- REPORTES (Solo Admin) --}}
+
                                     <li class="nav-item">
                                         <a href="{{ route('reportes.index') }}" class="nav-link">
                                             <i class="bi bi-bar-chart-line me-1"></i> Reportes
@@ -210,21 +214,23 @@
                                         data-bs-toggle="dropdown">
                                         <span>{{ Auth::user()->name }}</span>
 
-                                        {{-- ETIQUETA / BADGE DEL ROL AL LADO DEL NOMBRE --}}
+                                        {{-- BADGE DEL ROL --}}
                                         @if (Auth::user()->rol === 'admin')
                                             <span class="badge bg-warning text-dark border border-light badge-rol">
                                                 <i class="bi bi-shield-check me-1"></i>Admin
                                             </span>
                                         @else
-                                            <span class="badge bg-light text-dark badge-rol">
-                                                <i class="bi bi-person me-1"></i>Técnico
+                                            <span
+                                                class="badge bg-info-subtle text-info border border-info-subtle badge-rol">
+                                                <i class="bi bi-person-badge me-1"></i>Supervisor(a)
                                             </span>
                                         @endif
                                     </a>
 
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                         <li class="px-3 py-1 text-muted small border-bottom mb-1">
-                                            Rol: <strong>{{ ucfirst(Auth::user()->rol ?? 'tecnico') }}</strong>
+                                            Rol:
+                                            <strong>{{ Auth::user()->rol === 'admin' ? 'Administrador' : 'Supervisor(a)' }}</strong>
                                         </li>
                                         <li>
                                             <a class="dropdown-item text-danger" href="{{ route('logout') }}"
@@ -237,6 +243,7 @@
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
+                                </li>
                                 </li>
                             @endguest
                         </ul>
