@@ -27,6 +27,11 @@ Route::get('/', function () {
     //phpinfo();
     return redirect()->route('login');
 });
+
+Route::get('/landing', function () {
+    return view('landing');
+})->name('landing');
+
 Auth::routes();
 
 Route::get('/gestiones/nueva', [GestionesController::class, 'nueva'])->name('gestiones.nueva');
