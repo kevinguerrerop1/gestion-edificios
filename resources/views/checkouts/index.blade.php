@@ -2,57 +2,136 @@
 
 @section('content')
     <style>
+        /* Contenedor de scroll horizontal unificado */
         .filtro-scroll {
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding-bottom: 6px;
+            padding-bottom: 8px;
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
         .filtro-scroll::-webkit-scrollbar {
-            height: 5px;
+            height: 4px;
         }
 
-        .filtro-scroll::-webkit-scrollbar-thumb {
-            background: #ccc;
+        .filtro-scroll::-webkit-scrollbar-track {
+            background: #f1f3f5;
             border-radius: 10px;
         }
 
-        .chip {
+        .filtro-scroll::-webkit-scrollbar-thumb {
+            background: #ced4da;
+            border-radius: 10px;
+        }
+
+        .filtro-scroll::-webkit-scrollbar-thumb:hover {
+            background: #198754;
+        }
+
+        /* 1. SECTOR EN PROCESO / CERRADOS (Estilo Segmented Card) */
+        .nav-segmented {
+            display: inline-flex;
+            background: #f1f3f5;
+            padding: 4px;
+            border-radius: 12px;
+            gap: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .nav-segmented .nav-link-segmented {
+            padding: 8px 20px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #6c757d;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-segmented .nav-link-segmented:hover {
+            color: #212529;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .nav-segmented .nav-link-segmented.active-proceso {
+            background: #ffffff;
+            color: #0d6efd;
+            box-shadow: 0 2px 6px rgba(13, 110, 253, 0.15);
+        }
+
+        .nav-segmented .nav-link-segmented.active-cerrado {
+            background: #ffffff;
+            color: #198754;
+            box-shadow: 0 2px 6px rgba(25, 135, 84, 0.15);
+        }
+
+        /* 2. FILTRO DE MESES (Chips Modernos) */
+        .chip-mes {
             flex: 0 0 auto;
-            padding: 7px 14px;
-            border-radius: 25px;
-            border: 1px solid #ddd;
+            padding: 6px 14px;
+            border-radius: 50rem;
+            border: 1px solid #e9ecef;
             background: #f8f9fa;
             text-decoration: none;
             font-size: 13px;
-            color: #333;
-            display: flex;
+            font-weight: 500;
+            color: #495057;
+            display: inline-flex;
             align-items: center;
             gap: 5px;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .chip:hover {
+        .chip-mes:hover {
             background: #e9ecef;
+            color: #212529;
             transform: translateY(-1px);
         }
 
-        .chip.active {
-            background: #0d6efd;
-            color: white;
-            border-color: #0d6efd;
+        .chip-mes.active {
+            background: #198754;
+            color: #ffffff !important;
+            border-color: #198754;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(25, 135, 84, 0.25);
         }
 
-        .chip .badge {
-            font-size: 10px;
-            padding: 3px 6px;
+        /* 3. FILTRO DE EDIFICIOS */
+        .chip {
+            flex: 0 0 auto;
+            padding: 6px 14px;
+            border-radius: 50rem;
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+        }
+
+        .chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .chip.activo {
+            font-weight: 700 !important;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+            transform: translateY(-1px);
         }
     </style>
 
-    {{-- Contenedor centrado y proporcionado --}}
+    {{-- Contenedor principal --}}
     <div class="container py-4">
+        {{-- ENCABEZADO --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="d-flex align-items-center">
                 <i class="bi bi-clipboard-check fs-3 me-2 text-primary"></i>
@@ -62,32 +141,32 @@
                 </div>
             </div>
             @if (Auth::user()->rol === 'admin')
-                <a href="{{ route('checkouts.create') }}" class="btn btn-success">
+                <a href="{{ route('checkouts.create') }}" class="btn btn-success shadow-sm fw-semibold">
                     <i class="bi bi-plus-circle me-1"></i> Nuevo Check-Out
                 </a>
             @endif
         </div>
 
-        <ul class="nav nav-tabs mb-3">
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('checkouts.index') ? 'active' : '' }}"
+        {{-- 1. PESTAÑAS CARD: EN PROCESO / CERRADOS --}}
+        <div class="mb-4">
+            <div class="nav-segmented">
+                <a class="nav-link-segmented {{ request()->routeIs('checkouts.index') ? 'active-proceso' : '' }}"
                     href="{{ route('checkouts.index', request()->only('edificio_id')) }}">
                     🔄 En proceso
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('checkouts.cerrados') ? 'active' : '' }}"
+                <a class="nav-link-segmented {{ request()->routeIs('checkouts.cerrados') ? 'active-cerrado' : '' }}"
                     href="{{ route('checkouts.cerrados', request()->only('edificio_id')) }}">
                     ✔ Cerrados
                 </a>
-            </li>
-        </ul>
+            </div>
+        </div>
 
-        {{-- 📅 FILTRO POR MES --}}
-        <div class="mb-3">
+        {{-- 2. 📅 FILTRO POR MES --}}
+        <div class="mb-4">
             <div class="filtro-scroll">
+                @php $todosMesActivo = !request('mes'); @endphp
                 <a href="{{ request()->fullUrlWithQuery(['mes' => null]) }}"
-                    class="btn btn-sm me-2 flex-shrink-0 {{ request('mes') ? 'btn-outline-dark' : 'btn-dark' }}">
+                    class="chip-mes {{ $todosMesActivo ? 'active' : '' }}">
                     📅 Todos
                 </a>
 
@@ -110,8 +189,8 @@
 
                 @foreach ($meses as $numero => $nombre)
                     @php $activo = $mesSeleccionado == $numero; @endphp
-                    <a href="{{ request()->fullUrlWithQuery(['mes' => $numero]) }}" class="btn btn-sm me-2 flex-shrink-0"
-                        style="background-color: {{ $activo ? '#198754' : 'transparent' }}; border: 2px solid #198754; color: {{ $activo ? '#fff' : '#198754' }}; border-radius: 25px;">
+                    <a href="{{ request()->fullUrlWithQuery(['mes' => $numero]) }}"
+                        class="chip-mes {{ $activo ? 'active' : '' }}">
                         {{ $nombre }}
                     </a>
                 @endforeach
@@ -119,60 +198,60 @@
         </div>
 
         @if (session('success'))
-            <div class="alert alert-success d-flex align-items-center gap-2">
+            <div class="alert alert-success d-flex align-items-center gap-2 rounded-3 shadow-sm mb-4">
                 <i class="bi bi-check-circle-fill"></i>
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- FILTRO POR EDIFICIO --}}
-        <div class="mb-3">
-            <div class="mb-2">
-                <input type="text" id="buscadorEdificio" class="form-control form-control-sm"
-                    placeholder="🔍 Buscar edificio...">
+        {{-- 3. 🏢 FILTRO POR EDIFICIO Y BUSCADOR --}}
+        <div class="mb-4 p-3 bg-light rounded-4 border shadow-sm">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+                <span class="fw-semibold text-secondary small">🏢 Filtrar por Edificio:</span>
+                <div class="position-relative" style="width: 220px;">
+                    <input type="text" id="buscadorEdificio"
+                        class="form-control form-control-sm rounded-pill ps-4 bg-white" placeholder="Buscar edificio...">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"
+                        style="font-size: 0.75rem;"></i>
+                </div>
             </div>
 
-            <div class="filtro-scroll" id="listaEdificios">
-                <div class="mb-3">
-                    <div class="d-flex overflow-auto pb-2" id="scrollEdificios">
-                        <a href="{{ request()->fullUrlWithQuery(['edificio_id' => null]) }}"
-                            class="btn btn-sm me-2 flex-shrink-0 {{ request('edificio_id') ? 'btn-outline-dark' : 'btn-dark' }}">
-                            Todos
+            <div class="filtro-scroll pt-1" id="listaEdificios">
+                <div class="d-flex gap-2" id="scrollEdificios">
+                    @php $todosEdifActivo = !request('edificio_id'); @endphp
+                    <a href="{{ request()->fullUrlWithQuery(['edificio_id' => null]) }}"
+                        class="chip bg-secondary text-white {{ $todosEdifActivo ? 'activo' : '' }}" data-nombre="todos">
+                        🏢 Todos
+                    </a>
+
+                    @foreach ($edificios as $e)
+                        @php
+                            $activo = request('edificio_id') == $e->id;
+                            $color = $e->color ?? '#6c757d';
+
+                            $hex = ltrim($color, '#');
+                            if (strlen($hex) == 3) {
+                                $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+                            }
+                            $r = hexdec(substr($hex, 0, 2));
+                            $g = hexdec(substr($hex, 2, 2));
+                            $b = hexdec(substr($hex, 4, 2));
+                            $yiq = ($r * 299 + $g * 587 + $b * 114) / 1000;
+
+                            $textColor = $yiq >= 150 ? '#111827' : '#ffffff';
+                        @endphp
+
+                        <a href="{{ request()->fullUrlWithQuery(['edificio_id' => $e->id]) }}"
+                            class="chip {{ $activo ? 'activo' : '' }}" data-nombre="{{ strtolower($e->nombre) }}"
+                            style="
+                                background-color: {{ $color }};
+                                border-color: {{ $activo ? '#000000' : $color }};
+                                color: {{ $textColor }};
+                                opacity: {{ request('edificio_id') && !$activo ? '0.5' : '1' }};
+                            ">
+                            {{ $e->nombre }}
                         </a>
-
-                        @foreach ($edificios as $e)
-                            @php
-                                $activo = request('edificio_id') == $e->id;
-                                $color = $e->color ?? '#6c757d';
-
-                                $hex = ltrim($color, '#');
-                                if (strlen($hex) == 3) {
-                                    $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-                                }
-                                $r = hexdec(substr($hex, 0, 2));
-                                $g = hexdec(substr($hex, 2, 2));
-                                $b = hexdec(substr($hex, 4, 2));
-                                $yiq = ($r * 299 + $g * 587 + $b * 114) / 1000;
-
-                                $textColor = $yiq >= 150 ? '#111827' : '#ffffff';
-                            @endphp
-
-                            <a href="{{ request()->fullUrlWithQuery(['edificio_id' => $e->id]) }}"
-                                class="btn btn-sm me-2 flex-shrink-0 {{ $activo ? 'activo' : '' }}"
-                                style="
-                            background-color: {{ $color }};
-                            border: 2px solid {{ $activo ? '#000000' : $color }};
-                            color: {{ $textColor }};
-                            border-radius: 20px;
-                            font-weight: {{ $activo ? 'bold' : '500' }};
-                            box-shadow: {{ $activo ? '0 0 0 3px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15)' : '0 1px 3px rgba(0,0,0,0.1)' }};
-                            opacity: {{ request('edificio_id') && !$activo ? '0.55' : '1' }};
-                            transition: all 0.2s ease;
-                        ">
-                                {{ $e->nombre }}
-                            </a>
-                        @endforeach
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -443,7 +522,8 @@
                                 <label class="form-label small fw-semibold">Reemplazar documento (PDF):</label>
                             @else
                                 <label class="form-label small fw-semibold">Seleccionar documento Check-Out Terreno
-                                    (PDF):</label>
+                                    (PDF)
+                                    :</label>
                             @endif
 
                             <input type="file" name="pdf_terreno" class="form-control" accept="application/pdf"
@@ -699,11 +779,11 @@
             document.querySelectorAll('#listaEdificios .chip').forEach(el => {
                 let nombre = el.dataset.nombre || '';
                 if (filtro === '') {
-                    el.style.display = 'flex';
+                    el.style.display = 'inline-flex';
                     return;
                 }
                 if (nombre.includes(filtro)) {
-                    el.style.display = 'flex';
+                    el.style.display = 'inline-flex';
                 } else {
                     el.style.display = 'none';
                 }
