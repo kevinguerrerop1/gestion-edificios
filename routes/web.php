@@ -37,6 +37,8 @@ Auth::routes();
 
 Route::get('/firmas', [App\Http\Controllers\CheckoutController::class, 'generadorFirmas'])->name('firmas.index');
 
+Route::get('/firmas', [App\Http\Controllers\CheckoutController::class, 'generadorFirmas'])->name('firmas.index');
+
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/usuarios/cambiar-password', [UserController::class, 'editPassword'])->name('usuarios.password.edit');
