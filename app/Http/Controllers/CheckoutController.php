@@ -469,7 +469,6 @@ class CheckoutController extends Controller
     {
         return view('firmas.index');
     }
-<<<<<<< Updated upstream
 
     public function subirTerreno(Request $request, $id)
     {
@@ -501,6 +500,5 @@ class CheckoutController extends Controller
 
         return back()->with('success', 'PDF de terreno subido correctamente.');
     }
-=======
->>>>>>> Stashed changes
+
 }
